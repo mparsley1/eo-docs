@@ -101,7 +101,8 @@ The credentials are stored in the eo-playbooks repo under:
     eo-playbooks/roles/servers_no_s3/files/config_eo_service.yml
     eo-playbooks/roles/common/files/id_rsa
 
-The first file contains the credentials for CREODAS, and the second is for running on a local machine. 
+The first file contains the credentials for CREODAS, 
+and the second is for running on a local machine (or one without S3 storage). 
 The third file is the 
 [GitHub ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
@@ -109,7 +110,8 @@ If you want to use run the eo-custom-scripts and eoian without using Ansible, yo
 need to decrypt the configuration files and copy the config files to the required directory (as described below).
 [See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
 
-Put the configuration file in the user's home directory, keeping the files names: config_eo_service.yml and config_eo_service.yml.
+Put the appropriate configuration file in the user's home directory,
+keeping the files names: config_eo_service.yml and config_eo_service.yml.
 
 To run the code using Docker, copy the config files and GitHub key to the credentials directory,
 for example, eo-custom-scripts\credentials. 
@@ -117,8 +119,10 @@ This is required because Docker cannot access files outside it's scope when buil
 The files in the credentials' directory are copied to the home directory in the container.
 
 It is not necessary to carry out these steps manually if you use Ansible. 
-However, if you are doing them manually, refer to the following Ansible role:
+However, if you are doing them manually, refer to the following Ansible roles:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eo-playbooks/roles/common/tasks/main.yml
+* eo-playbooks/roles/common/tasks/main.yml
+* eo-playbooks/roles/servers_creodias/tasks/main.yml
+* eo-playbooks/roles/servers_no_s3/tasks/main.yml
 
 for the steps involved in decrypting and copying the credentials across.
