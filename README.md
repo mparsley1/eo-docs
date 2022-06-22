@@ -89,7 +89,8 @@ See the README in the repo for the installation and usage instructions.
 
 ### Credentials
 
-The credentials are stored in yaml files in the repository and are encrypted and the key to decrypt them is stored in
+The credentials are stored in yaml files in the eo-playbooks repository
+and are encrypted and the key to decrypt them is stored in
 the Compass account LastPass under Shared-ECHOES/eo-playbooks. 
 The playbook is executed with the "--ask-pass" option, which prompts for the
 password. 
