@@ -102,6 +102,6 @@ The credentials are stored in the eo-playbooks repo under:
 
 
 If you want to use run the eo-custom-scripts and eoian without using Ansible, you will
-need to decrypt the configuration files.
+need to decrypt the configuration files and copy the config files to the user's home directory.
 [See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
 Put the configuration files in the user's home directory, keeping the files names: config_eo_service.yml and config_eo_service.yml. 
