@@ -81,13 +81,13 @@ that the code runs uniformly and consistently on the host machine or container s
 In general, the code is developed on local or virtual machines, rather than the Docker containers. There are a number of
 steps involved in setting up the machine for development work.
 
-### Ansible
+### Automation of the dev environment using Ansible
 
 Ansible is used to automate the setup of the development machines. 
 The ansible playbooks are in the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo.
 See the README in the repo for the installation and usage instructions.
 
-### Credentials
+### Handling the credentials
 
 The credentials are stored in yaml files in the eo-playbooks repository
 and are encrypted and the key to decrypt them is stored in
@@ -97,11 +97,28 @@ password.
 The credentials will be copied over to the remote machine and unencrypted.
 The credentials are stored in the eo-playbooks repo under:
 
-    roles/servers_creodias/files/config_eo_service.yml
-    roles/servers_no_s3/files/config_eo_service.yml
+    eo-playbooks/roles/servers_creodias/files/config_eo_service.yml
+    eo-playbooks/roles/servers_no_s3/files/config_eo_service.yml
+    eo-playbooks/roles/common/files/id_rsa
 
+The first file contains the credentials for CREODAS, and the second is for running on a local machine. 
+The third file is the 
+[GitHub ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
 If you want to use run the eo-custom-scripts and eoian without using Ansible, you will
-need to decrypt the configuration files and copy the config files to the user's home directory.
+need to decrypt the configuration files and copy the config files to the required directory (as described below).
 [See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
-Put the configuration files in the user's home directory, keeping the files names: config_eo_service.yml and config_eo_service.yml. 
+
+Put the configuration file in the user's home directory, keeping the files names: config_eo_service.yml and config_eo_service.yml.
+
+To run the code using Docker, copy the config files and GitHub key to the credentials directory,
+for example, eo-custom-scripts\credentials. 
+This is required because Docker cannot access files outside it's scope when building the image. 
+The files in the credentials' directory are copied to the home directory in the container.
+
+It is not necessary to carry out these steps manually if you use Ansible. 
+However, if you are doing them manually, refer to the following Ansible role:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eo-playbooks/roles/common/tasks/main.yml
+
+for the steps involved in decrypting and copying the credentials across.
