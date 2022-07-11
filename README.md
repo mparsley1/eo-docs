@@ -2,7 +2,7 @@
 
 This is the high-level documentation for the ECHOES Project code.
 
-To view this documentation in a browser install [docsify](https://docsify.js.org/), cd to the current directory, and
+To view this documentation in a browser, install [docsify](https://docsify.js.org/), cd to the eo-docs directory, and
 enter the command:
 
     docsify serve
@@ -30,6 +30,15 @@ Therefore, the machine requirements may be greater for the eoian processing chai
 
 eoian and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
 these packages for information on their installation and usage.
+The dependancy of the modules is shown in the following diagram:
+
+```mermaid
+stateDiagram-v2
+    eo_io --> eo_custom_scripts
+    eo_io --> eoian
+    eoian --> eo_processors
+    eo_io --> eo_processors
+```
 
 ## eo-custom-scripts
 
@@ -66,16 +75,19 @@ can be quickly implemented on the ECHOES platform.
 
 ## eoian (todo)
 
+## eo-processors (todo)
+
 ## Object storage
 
 The results of the EO processing (e.g. GeoTiffs) are stored in an object store. A third Python
 package, [eo-io](https://github.com/ECHOESProj/eo-io), is used
 by [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 and [eoian](https://github.com/ECHOESProj/eoian]) to store the results in S3. S3 is available on AWS and an S3
-compatible object store is available on Creodias. When running locally, [Minio](https://min.io/) can be used to provide
+compatible object store is available on CREODIAS. When running locally, [Minio](https://min.io/) can be used to provide
 an S3 compatible, locally hosted, object store.
 
 ## Websocket server (todo)
+ 
 
 ## The Development Environment & Deployment
 
