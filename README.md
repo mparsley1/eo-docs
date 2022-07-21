@@ -1,4 +1,4 @@
-# The ECHOES EO Processing Service
+# The ECHOES Earth Observation Processing Service
 
 This is the high-level documentation for the ECHOES Project code.
 
@@ -9,8 +9,21 @@ enter the command:
 
 ## Introduction
 
-The ECHOES Earth Observation (EO) code is used to provide an EO service for the ECHOES web application. 
+The ECHOES Earth Observation (EO) Processing Service has been developed to
+generate GeoTIFFs and associated metadata, which are consumed by the web service.
+It is designed to run in the cloud.
+The EO service can consume data from the Sentinel-Hub API or alternatively, 
+satellite data stored on and object store on CREODIAS, or other compatible cloud services. 
+
 The EO service is decoupled for the web service and can be used independently of it.
+It is containerised for portability and scalability. 
+It is extendable, allowing further EO processors to be easily added.     
+
+
+The EO service provides CLI for calling the EO processors. 
+The results (images, metadata, etc.) are stored in an S3 compatible object store.
+These are accessed by the EHCOES UI component for display to users. 
+The EO service does not do the scheduling; this is done by eo-ruuner. 
 
 The processing chains have been developed to run in the cloud. 
 Advantages of using cloud services, such as Creodias and AWS, include:
@@ -28,7 +41,7 @@ data stored in the object store (e.g. in the SAFE format for Sentinel-2 data).
 With eo-custom-scripts, the processing is done on Sentinel-Hub's servers, whereas with eoian the processing is done locally. 
 Therefore, the machine requirements may be greater for the eoian processing chain, depending on the processing.
 
-eoian and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
+eo-processors and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
 these packages for information on their installation and usage.
 The dependancy of the modules is shown in the following diagram:
 
@@ -40,7 +53,7 @@ stateDiagram-v2
     eo_io --> eo_processors
 ```
 
-## eo-custom-scripts
+## [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 
 [Sentinel Hub](https://www.sentinel-hub.com/) is a multi-spectral and multi-temporal big data satellite imagery service.
 Users can use APIs to retrieve satellite data over their AOI and specific time range from full archives in a matter of
@@ -73,11 +86,11 @@ The code in the [Sentinel-Hub Customs Scripts repository](https://github.com/sen
 added to the eo-mosaics repository, so that the script can called via the command line. This enables many EO products
 can be quickly implemented on the ECHOES platform.
 
-## eoian (todo)
+## [eoian](https://github.com/ECHOESProj/eoian) (todo)
 
-## eo-processors (todo)
+## [eo-processors](https://github.com/ECHOESProj/eo-processors) (todo)
 
-## Object storage
+## [eo-io](https://github.com/ECHOESProj/eo-io)
 
 The results of the EO processing (e.g. GeoTiffs) are stored in an object store. A third Python
 package, [eo-io](https://github.com/ECHOESProj/eo-io), is used
@@ -86,13 +99,12 @@ and [eoian](https://github.com/ECHOESProj/eoian]) to store the results in S3. S3
 compatible object store is available on CREODIAS. When running locally, [Minio](https://min.io/) can be used to provide
 an S3 compatible, locally hosted, object store.
 
-## Websocket server (todo)
- 
+## [websockets-server](https://github.com/ECHOESProj/websockets-server) (todo)
 
 ## The Development Environment & Deployment
 
 The setup of the earth observation environment can be time-consuming. Docker helps here. Both eo-custom-scripts and
-eoian are containerised. It is therefore a matter of building the containers, as described in the README of these
+eo-processors are containerised. It is therefore a matter of building the containers, as described in the README of these
 packages. However, to get the EO service fully working we also need to build and run the websockets-server image and
 eo-stack [#todo add section on websockets-server and eo-stack], in addition to handling the credentials.Docker ensures
 that the code runs uniformly and consistently on the host machine or container service.
@@ -114,10 +126,10 @@ option, which prompts for the password. The credentials will be copied over to t
 credentials are stored in the eo-playbooks repo under:
 
 * roles/servers_creodias/files/config_eo_service.yml (the credentials for CREODAS)
-* roles/servers_no_s3/files/config_eo_service.yml  (the credentials for a local machine, or one without S3 storage)
-* roles/common/files/id_rsa (the [GitHub ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)).
+* roles/servers_no_s3/files/config_eo_service.yml (the credentials for a local machine, or one without S3 storage)
+* roles/common/files/id_rsa (the [GitHub ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)). TODO: update this
 
-If you want to use run the eo-custom-scripts and eoian without using Ansible, you will need to decrypt the configuration
+If you want to use the code without using Ansible, you will need to decrypt the configuration
 files and copy the config files to the required directory (as described below).
 [See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
 
@@ -136,3 +148,31 @@ to the following Ansible roles in the eo-playbooks repo:
 * roles/servers_no_s3/tasks/main.yml
 
 for the steps involved in decrypting and copying the credentials across.
+          
+## Usage (Using Docker) 
+ 
+After the development machine has been provisioned (see [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks)),
+login into the terminal and list the container images available, as follows:
+
+    vagrant@ubuntu-focal:~$ docker image list
+    REPOSITORY          TAG            IMAGE ID       CREATED         SIZE
+    eo-processors       latest         8bd2b6719048   2 days ago      1.99GB
+    eo-custom-scripts   latest         9fb59b602664   2 days ago      1.44GB
+    websockets-server   latest         5ea2a8fbc8fd   2 days ago      408MB
+
+Both eo-processors and eo-custom-scripts provide CLIs with which to run the processing, as shown in the following examples: 
+
+    docker run --env-file=/home/eouser/env_file eo-custom-scripts copernicus_services global_surface_water_change "POLYGON((-6.3777351379394 52.344188690186, -6.3780784606933 52.357234954835, -6.3552474975585 52.357749938966, -6.3561058044433 52.345218658448, -6.3777351379394 52.344188690186))" 2015-01-01 2020-12-31
+    docker run --env-file=/home/eouser/env_file eo-processors ndvi_satpy S2_MSI_L1C "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01 --cloud_cover=90
+
+Alternatively, the VM has the following alias:
+
+    alias eo-run='docker run --env-file=/home/eouser/env_file -v /data:/data --network host'
+
+which can the used call the container with the environment file automatically passed:
+
+    eo-run eo-processors change_detection_s2_pca "POLYGON ((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01
+                                                                                                                       
+See the README in these repositories for usage instructions.
+
+
