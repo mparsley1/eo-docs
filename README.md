@@ -19,7 +19,6 @@ The EO service is decoupled for the web service and can be used independently of
 It is containerised for portability and scalability. 
 It is extendable, allowing further EO processors to be easily added.     
 
-
 The EO service provides CLI for calling the EO processors. 
 The results (images, metadata, etc.) are stored in an S3 compatible object store.
 These are accessed by the EHCOES UI component for display to users. 
@@ -32,17 +31,23 @@ Advantages of using cloud services, such as Creodias and AWS, include:
 
 ## The EO Processing Packages
 
-There are two Python packages for EO processing with
-ECHOES: [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
-and [eoian](https://github.com/ECHOESProj/eoian]). [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
-uses the Sentinel-Hub API to generate products, whereas [eoian](https://github.com/ECHOESProj/eoian]) consumes satellite
-data stored in the object store (e.g. in the SAFE format for Sentinel-2 data).
+The following Python packages are used for EO processing in ECHOES:
+* [eo-io](https://github.com/ECHOESProj/eo-io) is used to interface to the S3 object store.
+It is a lower level module, used by the other packages,
+to write the GeoTIFFs and metadata to S3.
+
+* [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts) uses the Sentinel-Hub API to generate products.
+
+* [eoian](https://github.com/ECHOESProj/eoian]) is used to process satellite data for the store (e.g. in the SAFE format for Sentinel-2 data).
+
+* [eo-processors](https://github.com/ECHOESProj/eo-processors) contains the processors.
 
 With eo-custom-scripts, the processing is done on Sentinel-Hub's servers, whereas with eoian the processing is done locally. 
 Therefore, the machine requirements may be greater for the eoian processing chain, depending on the processing.
 
 eo-processors and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
-these packages for information on their installation and usage.
+[eo-processors](https://github.com/ECHOESProj/eo-processors) and [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
+for information on their installation and usage. 
 The dependancy of the modules is shown in the following diagram:
 
 ```mermaid
@@ -103,16 +108,37 @@ an S3 compatible, locally hosted, object store.
 
 ## The Development Environment & Deployment
 
-The setup of the earth observation environment can be time-consuming. Docker helps here. Both eo-custom-scripts and
-eo-processors are containerised. It is therefore a matter of building the containers, as described in the README of these
-packages. However, to get the EO service fully working we also need to build and run the websockets-server image and
-eo-stack [#todo add section on websockets-server and eo-stack], in addition to handling the credentials.Docker ensures
-that the code runs uniformly and consistently on the host machine or container service.
+Development of the EO processing chain can be done on a local or machine or a remote VM,
+hosted by, for example, CREODIAS or AWS.
 
-In general, the code is developed on local or virtual machines, rather than the Docker containers. There are a number of
-steps involved in setting up the machine for development work.
+The setup of the EO dev environment can be time-consuming. It involves the following sets:
+* install system packages
+* install Python requirements
+* copy keys over
+* decrypt and copy credentials over
+* set environment variables
+* install Docker
+* build Docker images
+* Install JupyterLab
+    
+### Docker containers
 
-### Automation of the dev environment using Ansible
+Both eo-custom-scripts and eo-processors are containerised. 
+It is therefore a matter of building the containers, as described in the README of these packages. 
+To get the EO service up and running, we also need to build and run the websockets-server image and
+eo-stack, in addition to handling the credentials.
+Docker ensures that the code runs uniformly and consistently on the host machine or container service.
+
+### GitHub credentials
+
+SSH deploy keys are used to access the code on the VM. 
+[The keys are located in the eo-playbooks repo](https://github.com/ECHOESProj/eo-playbooks/tree/main/roles/common/files).
+
+### Jupyter Lab
+
+JupyterLab is used to prototype EO processors, before being added to the processing chain.  
+
+## Automation of the dev environment using Ansible
 
 Ansible is used to automate the setup of the development machines. The ansible playbooks are in
 the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo. See the README in the repo for the installation and
@@ -133,8 +159,7 @@ If you want to use the code without using Ansible, you will need to decrypt the 
 files and copy the config files to the required directory (as described below).
 [See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
 
-Put the appropriate configuration file in the user's home directory, keeping the files names: config_eo_service.yml and
-config_eo_service.yml.
+Put the appropriate config_eo_service.yml configuration file in the user's home directory.
 
 To run the code using Docker, copy the config files and GitHub key to the credentials directory, for example,
 eo-custom-scripts\credentials. This is required because Docker cannot access files outside it's scope when building the
@@ -174,5 +199,14 @@ which can the used call the container with the environment file automatically pa
     eo-run eo-processors change_detection_s2_pca "POLYGON ((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01
                                                                                                                        
 See the README in these repositories for usage instructions.
+ 
+## Jupyter Lab
 
+Add this to local .bashrc:
+
+    ssh -i ~/.ssh/eo-stack.key -N -L 8888:localhost:8888 eouser@<ip-of-remote-server> &
+
+Go to:
+
+    http://127.0.0.1:8888
 
