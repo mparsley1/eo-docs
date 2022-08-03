@@ -20,9 +20,9 @@ It is containerised for portability and scalability.
 It is extendable, allowing further EO processors to be easily added.     
 
 The EO service provides CLI for calling the EO processors. 
-The results (images, metadata, etc.) are stored in an S3 compatible object store.
-These are accessed by the EHCOES UI component for display to users. 
-The EO service does not do the scheduling; this is done by eo-ruuner. 
+The generated outputs (images, metadata, etc.) are stored in an S3 compatible object store.
+These are accessed by the ECHOES UI component for display to users. 
+The EO service does not do the scheduling of the processing; this is done by eo-ruuner. 
 
 The processing chains have been developed to run in the cloud. 
 Advantages of using cloud services, such as Creodias and AWS, include:
@@ -91,9 +91,13 @@ The code in the [Sentinel-Hub Customs Scripts repository](https://github.com/sen
 added to the eo-mosaics repository, so that the script can called via the command line. This enables many EO products
 can be quickly implemented on the ECHOES platform.
 
+## [eo-processors](https://github.com/ECHOESProj/eo-processors) (todo)
+
+
 ## [eoian](https://github.com/ECHOESProj/eoian) (todo)
 
-## [eo-processors](https://github.com/ECHOESProj/eo-processors) (todo)
+This Python package is used to access satellite data from the data store, 
+process the data store it.
 
 ## [eo-io](https://github.com/ECHOESProj/eo-io)
 
@@ -111,7 +115,7 @@ an S3 compatible, locally hosted, object store.
 Development of the EO processing chain can be done on a local or machine or a remote VM,
 hosted by, for example, CREODIAS or AWS.
 
-The setup of the EO dev environment can be time-consuming. It involves the following sets:
+The setup of the EO dev environment can be time-consuming. It involves the following:
 * install system packages
 * install Python requirements
 * copy keys over
@@ -202,11 +206,15 @@ See the README in these repositories for usage instructions.
  
 ## Jupyter Lab
 
-Add this to local .bashrc:
+Anisble installs JupyterLab on the remote machine. 
+It can be accessed via \<ip of remote machine>:8888>.
+However, it is not secured (via http and not https).
+In order to access it securely, do the following:
+
+Execute the following:
 
     ssh -i ~/.ssh/eo-stack.key -N -L 8888:localhost:8888 eouser@<ip-of-remote-server> &
 
-Go to:
+in a web browser the goto:
 
     http://127.0.0.1:8888
-
