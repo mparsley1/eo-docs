@@ -79,7 +79,7 @@ seconds.
 The figure below shows a chain block diagram for the eo-mosaics processing chain, which generates GeoTIFFs using Sentinel-Hub. 
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to CREODIAS,
 and cloud, for example, run on AWS. 
-To run on other cloud platforms, the credentials' file needs to be modified (see [Handling the credentials](#handling-the-credentials]). 
+To run on other cloud platforms, the credentials' file needs to be modified (see [Handling the credentials](#handling-the-credentials])). 
 
 ![eo-custom-scripts block diagram](images/eo-custom-scripts-block-diagram.png)
 
