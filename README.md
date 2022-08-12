@@ -1,4 +1,16 @@
-# The ECHOES Earth Observation Processing Service
+# The ECHOES Earth Observation Processing Service 
+### *Develop Earth Observation Algorithms and Automate Processing in the Cloud*
+
+
+
+
+## 
+
+The ECHOES Earth Observation Processing Service has be developed to automate the processing of
+Copernicus data and provide an integrated environment for developing algorithms.
+
+
+## This Document
 
 This is the high-level documentation for the ECHOES Project code.
 
@@ -7,19 +19,65 @@ enter the command:
 
     docsify serve
 
-## Introduction
+# Introduction
+
+## Earth Observation Data
+
+Copernicus is the European Union's Earth observation programme.
+The data collected by the Sentinel missions are free to access, for any use, on Open Hub.
+By year-end 2020, the data volume totaled 24.87 PiB, with 7.65 PiB published in 2020 alone.
+The rate of increase in Earth Observation (EO) data volume is set to increase in the coming years as more Sentinel
+missions come online.
+
+<figure>
+<img src="images/esa_satellites.png" alt="Trulli" style="width:100%">
+<figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b></figcaption>
+</figure>
+
+## Cloud providers
+
+At Compass we are using CREODIAS, but the code can is not tied to a particular platform. CREODIAS is one of the five DIAS (Data and Information access services) cloud-based platforms, funded by the European
+Commission, developed to facilitate and standardise the access to Copernicus data and information. The other DIAS
+platforms are Mundi, ONDA, WEkEO and Sobloo. The DIAS systems provide access to EO Copernicus data. The DIAS systems
+allow users to execute their applications in a cloud environment, and close to where data is stored.
+
+The following data is available on the CREODIAS (see https://creodias.eu/data-offer): Sentinel-1 GRD, Sentinel-2,
+Sentinel-3, new Sentinels (like 5P), ESA/Landsat, Envisat/Meris, full Sentinel-1 SLC for Europe and 6 months rolling
+archive for Sentinel-1 SLC outside Europe and elements of Copernicus Services.
+
+The data is accessible via an S3-compatible object store. The object store holds over 20 PB of data.
+It is possible to run Virtual Machine (VM) instances on a pay-per-use or fixed term basis. The size of the virtual
+machines range from 1 (virtual) core and 1 GB of RAM to 24 cores and 496 GB or RAM. It is possible to spin up multiple
+instance if required for large-scale processing. The price list is found here: https://creodias.eu/price-list.
+
+
+## Satellite Data Processing Tools
+
+The satellite products come in a large variety of formats and there are many options for processing satellite data. The
+challenge is to learn how to access, process, and store the data. Here are the tools that are most important to me:
+* SNAP (desktop software)
+* Sentinel Hub (API for satellite data)
+* Satpy (Python library)
+* GDAL
+
+## The ECHOES Earth Observation Processing Service 
+
+The challange is to...
 
 The ECHOES Earth Observation (EO) Processing Service has been developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
 It is designed to run in the cloud.
-The EO service can consume data from the Sentinel-Hub API or alternatively, 
-satellite data stored on and object store on CREODIAS, or other compatible cloud services. 
+
+##  
+
+The EO service can consume data from the Sentinel-Hub API or alternatively,
+satellite data stored on and object store on CREODIAS, or other compatible cloud services.
 
 The EO service is decoupled for the web service and can be used independently of it.
-It is containerised for portability and scalability. 
-It is extendable, allowing further EO processors to be easily added.     
+It is containerised for portability and scalability.
+It is extendable, allowing further EO processors to be easily added.
 
-The EO service provides CLI for calling the EO processors. 
+The EO service provides CLI for calling the EO processors.
 The generated outputs (images, metadata, etc.) are stored in an S3 compatible object store.
 These are accessed by the ECHOES UI component for display to users. 
 The EO service does not do the scheduling of the processing; this is done by eo-ruuner. 
@@ -28,6 +86,8 @@ The processing chains have been developed to run in the cloud.
 Advantages of using cloud services, such as Creodias and AWS, include:
 * they can take advantage of the satellite data available there
 * the size of the VMs can be increased or decreased as required
+
+## Quick start
 
 ## The EO Processing Packages
 
@@ -135,12 +195,15 @@ Docker ensures that the code runs uniformly and consistently on the host machine
 
 ### GitHub credentials
 
-SSH deploy keys are used to access the code on the VM. 
-[The keys are located in the eo-playbooks repo](https://github.com/ECHOESProj/eo-playbooks/tree/main/roles/common/files).
+SSH deploy keys are used to access the code on the VM.
+[The keys are located in the eo-playbooks repo](https://github.com/ECHOESProj/eo-playbooks/tree/main/roles/common/files)
+.
 
 ### Jupyter Lab
 
-JupyterLab is used to prototype EO processors, before being added to the processing chain.  
+JupyterLab is used to prototype EO processors, before being added to the processing chain.
+
+TODO: https://....
 
 ## Automation of the dev environment using Ansible
 
@@ -218,3 +281,11 @@ Execute the following:
 in a web browser the goto:
 
     http://127.0.0.1:8888
+
+Binder notebooks:
+[Binder Notebooks](https://mybinder.org/v2/gh/ECHOESProj/eo-notebooks/main)
+
+![fds](images/Compass_Informatics_Tracsis_Colour.svg)
+
+![fds](images/ECHOES-Circular-Logo-EngWel_orange-1980x494.png)
+
