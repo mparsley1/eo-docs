@@ -34,12 +34,43 @@ missions come online.
 <figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b></figcaption>
 </figure>
 
+Sentinel-1 and -2 can be downloaded from the [Copernicus Open Access Hub](https://scihub.copernicus.eu/) 
+in the Standard Archive Format (SAFE). 
+This format consists of a folder containing the image data in a binary data format and product metadata in XML. 
+The Sentinel-1 GRD products are around 1.7 GB. 
+The Sentinel-2 L1C and L2A products are around 600 MB and 800 MB respectively.
+
+Each Sentinel-2 product contains data covering a tile (also called a granule).
+The tile grid is available for download in the .kml format and opened in Google Earth.
+
+<figure>
+<img src="images/sentinel2tiles.png" alt="Trulli" style="width:100%">
+<figcaption align = "center"><b></b></figcaption>
+</figure>
+
+Each tile is 100 km×100 km, with a 10 km overlap. 
+The tile covering Copenhagen, for example, is 33UUB.
+
+<figure>
+<img src="images/sentinel1kml.JPG" alt="Trulli" style="width:100%">
+<figcaption align = "center"><b></b></figcaption>
+</figure>
+
+
 ## Cloud providers
 
-At Compass we are using CREODIAS, but the code can is not tied to a particular platform. CREODIAS is one of the five DIAS (Data and Information access services) cloud-based platforms, funded by the European
-Commission, developed to facilitate and standardise the access to Copernicus data and information. The other DIAS
-platforms are Mundi, ONDA, WEkEO and Sobloo. The DIAS systems provide access to EO Copernicus data. The DIAS systems
-allow users to execute their applications in a cloud environment, and close to where data is stored.
+Processing EO data in the cloud has a number of advantages over processing on a local machine or in-house server.
+Firstly, if the cloud provider provides access to the source EO data, 
+it may be accessed much more efficiently than downloading it from the Copernicus Open Access Hub.
+Other advantages in using a cloud provider include, scalability
+
+The DIAS (Data and Information access services) cloud-based platforms, funded by the European
+Commission, developed to facilitate and standardise the access to Copernicus data and information. 
+The other DIAS platforms are Mundi, ONDA, WEkEO and Sobloo. 
+The DIAS systems provide access to EO Copernicus data. 
+The DIAS systems allow users to execute their applications in a cloud environment, and close to where data is stored. 
+At Compass we are using CREODIAS, but the code can is not tied to a particular platform. 
+ 
 
 The following data is available on the CREODIAS (see https://creodias.eu/data-offer): Sentinel-1 GRD, Sentinel-2,
 Sentinel-3, new Sentinels (like 5P), ESA/Landsat, Envisat/Meris, full Sentinel-1 SLC for Europe and 6 months rolling
