@@ -12,7 +12,7 @@ It utilizes cloud platforms to enable fast access to EO data and flexible access
 The service provides Jupyter notebooks to prototype EO processing algorithms.
 The services involve a number of steps to provision, and Ansible is used to automate this.
 
-## This Document
+# This Document
 
 This is the high-level documentation for the ECHOES Project code.
 
@@ -61,7 +61,7 @@ The tile covering Copenhagen, for example, is 33UUB.
 
 
 
-## Cloud processing
+# Cloud processing
 
 Processing EO data in the cloud has a number of advantages over processing on a local machine or in-house server.
 
@@ -305,7 +305,7 @@ See the README of each of the processors for information on their usage.
 [websockets-server](https://github.com/ECHOESProj/websockets-server) 
 
 
-## The Development Environment & Deployment
+# The Development Environment & Deployment
 
 Development of the EO processing chain can be done on a local or machine or a remote VM,
 hosted by, for example, CREODIAS or AWS.
@@ -336,7 +336,7 @@ SSH deploy keys are used to access the code on the VM.
 
 
 
-## Automation of the dev environment using Ansible
+# Provisioning of the servers using Ansible
 
 Ansible is used to automate the setup of the development machines. The ansible playbooks are in
 the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo. See the README in the repo for the installation and
@@ -372,13 +372,15 @@ to the following Ansible roles in the eo-playbooks repo:
 
 for the steps involved in decrypting and copying the credentials across.
 
-## Calling the EO service
 
-### The command line interface
 
-### Webhooks callback
+# Calling the EO service
 
-### Docker 
+## The command line interface
+
+## Webhooks callback
+
+## Docker 
  
 After the development machine has been provisioned (see [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks)),
 login into the terminal and list the container images available, as follows:
@@ -404,7 +406,7 @@ which can the used call the container with the environment file automatically pa
                                                                                                                        
 See the README in these repositories for usage instructions.
  
-## Jupyter Lab
+# Jupyter Lab
 
 JupyterLab is used to prototype EO processors, before being added to the processing chain.
 It is installed by the Ansible Playbook (see [Automation of the EO Custom Scripts repo](#automation-of-the-eo-custom-scripts-repo))
@@ -444,3 +446,4 @@ in a web browser the goto:
 
 ![fds](images/ECHOES-Circular-Logo-EngWel_orange-1980x494.png)
 
+# List of EO Packages
