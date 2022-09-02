@@ -100,7 +100,7 @@ allowing computations across the time dimension, with raster alignment issues ha
 Data cubes will be used to provide information about changes over time and space.
 
 Alternatives to Sentinel Hub/X-Cube data cubes include Open Data Cube (ODC) and OpenEO. 
-Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-mosaics) and, 
+Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-custom-scripts) and, 
 being a hosted service, it does not require additional infrastructure.   
 
 #### Comparison
@@ -117,16 +117,16 @@ Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 O
 | Datacubes access?      | No                      |  Yes for Sentinel-1, -2 & -3 (via X-Cube).              | 
 
 
-The eo-mosaics processing chain (which uses Sentinel-Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
+The eo-custom-scripts processing chain (which uses Sentinel-Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
 It provides a convenient API for accessing and processing satellite data and has clouding mosaicing. 
 Using the API, only the data within the AOI is processed on the Sentinel-Hub server, 
 which makes the processing much faster for smaller regions. This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM and it is not possible to just download the data within the AOI. 
 
-The eo-mosaics processing chain will generally be used in preference to the eoain processing chain; 
-however, one case for using the eoian processing chain, instead of eo-mosaics, 
+The eo-custom-scripts processing chain will generally be used in preference to the eoain processing chain; 
+however, one case for using the eoian processing chain, instead of eo-custom-scripts, 
 is where an algorithm implemented in SNAP [11] is required. 
-SNAP has many built-in algorithms which are not directly available in eo-mosaics. 
-For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be automated using eoian. In the case where collaborators from other institutions in the ECHOES project implement there processing using SNAP, the eoain processing chain will be used to automate it. Another case for using eoian in place of eo-mosaics is where a very large area or large time period needs to be processed. Sentinel Hub has a limited data allowance (which can be increased at an additional cost); however, this has not been an issue so far. Also, some EO data is available on the CREODIAS object store that is not available on Sentinel-Hub. For example, the Sentinel-3 Level-2 land and water products are not currently available on Sentinel Hub (only the Level-1 product is available on Sentinel-Hub but both the Level-1 and Level-2 products are on the CREODIAS object store) and these may be required on the ECHOES platform.  
+SNAP has many built-in algorithms which are not directly available in eo-custom-scripts. 
+For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be automated using eoian. In the case where collaborators from other institutions in the ECHOES project implement there processing using SNAP, the eoain processing chain will be used to automate it. Another case for using eoian in place of eo-custom-scripts is where a very large area or large time period needs to be processed. Sentinel Hub has a limited data allowance (which can be increased at an additional cost); however, this has not been an issue so far. Also, some EO data is available on the CREODIAS object store that is not available on Sentinel-Hub. For example, the Sentinel-3 Level-2 land and water products are not currently available on Sentinel Hub (only the Level-1 product is available on Sentinel-Hub but both the Level-1 and Level-2 products are on the CREODIAS object store) and these may be required on the ECHOES platform.  
 
 ## Satellite Data Processing Tools
 
@@ -180,7 +180,7 @@ The processing chains are called remotely via webhooks
 (see [Triggering the processing using webhook callbacks](#triggering-the-processing-using-webhook-callbacks)).
 Webhook callbacks are used by the ECHOES web app to trigger the processing, 
 for the requested ROI and dates, over the internet.
-The webhooks callback run the processing chain on the remote (CREODIAS) server, via CLIs.
+The webhooks callback run the processing chains on the remote (CREODIAS) server, via CLIs.
 The two repos with code which provide CLIs, for the processing chains,
 and which may be called via the webhooks callback are:
 * [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
@@ -208,27 +208,30 @@ stateDiagram-v2
     eo_io --> eo_processors
 ```
 
+[eoian](https://github.com/ECHOESProj/eoian]) is used to download, process and store the satellite from the CREODIAS object store.
+The processors, themselves are in the [eo-processors](https://github.com/ECHOESProj/eo-processors) repo.
+This code is described in [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
+
 [eo-io](https://github.com/ECHOESProj/eo-io) is used to interface to the S3 object store.
 Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
 It is a lower level module, used by the other packages,
 to write the GeoTIFFs and metadata to S3.
-
-[eoian](https://github.com/ECHOESProj/eoian]) 
+eo-io is used by [eoian](https://github.com/ECHOESProj/eoian]) 
 and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. S3 is available on AWS and an S3
 compatible object store is available on CREODIAS.
-It is described in [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
 
 
 ## Automation of the EO Custom Scripts repo
 
 The code in the Sentinel-Hub Customs Scripts repository, https://github.com/sentinel-hub/custom-scripts, 
-has been added to the eo-mosaics repository, so that the script can be called via the command line. 
+has been added to the eo-custom-scripts repository, so that the script can be called via the command line. 
 This means that many EO products can be quickly implemented on the ECHOES platform. 
 
 With eo-custom-scripts, the processing is done on Sentinel-Hub's servers, whereas with eoian the processing is done locally. 
-Therefore, the machine requirements may be greater for the eoian processing chain, depending on the processing.
+Therefore, the machine requirements may be greater for the processors in eo-processors, 
+depending on the processing.
 
-The figure below shows a chain block diagram for the eo-mosaics processing chain, which generates GeoTIFFs using Sentinel-Hub. 
+The figure below shows a chain block diagram for the eo-custom-scripts processing chain, which generates GeoTIFFs using Sentinel-Hub. 
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to CREODIAS,
 and cloud, for example, run on AWS. 
 To run on other cloud platforms, the credentials' file needs to be modified (see [Handling the credentials](#handling-the-credentials])). 
@@ -240,11 +243,11 @@ but if one is not available, Minio can be used (see [Object Storage](#object-sto
 The code calls the Sentinel Hub API. The algorithm is implemented in JavaScript.
 
 The code in the [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts), has been
-added to the eo-mosaics repository, so that the script can called via the command line. This enables many EO products
+added to the eo-custom-scripts repository, so that the script can called via the command line. This enables many EO products
 can be quickly implemented on the ECHOES platform.
 
-eo-processors and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
-[eo-processors](https://github.com/ECHOESProj/eo-processors) and [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
+eo-processors and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. 
+See the README of [eo-processors](https://github.com/ECHOESProj/eo-processors) and [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 for information on their installation and usage. 
 
 
@@ -373,10 +376,9 @@ for the steps involved in decrypting and copying the credentials across.
 
 ### The command line interface
 
-### Calling the EO Service using webhooks
+### Webhooks callback
 
-          
-## Calling the EO service using Docker 
+### Docker 
  
 After the development machine has been provisioned (see [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks)),
 login into the terminal and list the container images available, as follows:
@@ -405,13 +407,29 @@ See the README in these repositories for usage instructions.
 ## Jupyter Lab
 
 JupyterLab is used to prototype EO processors, before being added to the processing chain.
+It is installed by the Ansible Playbook (see [Automation of the EO Custom Scripts repo](#automation-of-the-eo-custom-scripts-repo))
+
+![Juypter LAb](images/jupyter.JPG)
 
 Anisble installs JupyterLab on the remote machine. 
-It can be accessed via https://<ip of remote machine>:8888>.
-https://185.52.192.218:8888
+It can be accessed via
+
+    https://<ip of remote machine>:8888>.
+
+***TODO: Remove from open source version***
+For Compass Informatics, JupyterLab is accessible on the developement server with this URL: https://185.52.192.218:8888.
+The credentials to login to Jupyter Lab are stored in LastPass under Shared-ECHOES/JupyterLab.
+
+The eo-io, eoian and eo-processors packages may be imported in the notebooks.
+Additionally, datacubes may be accessed via the xcube interface.
 
 
-In order to access it securely, do the following:
+# Binder notebooks
+
+[Binder Notebooks](https://mybinder.org/v2/gh/ECHOESProj/eo-notebooks/main)
+
+
+# Binding ports
 
 Execute the following:
 
@@ -421,8 +439,6 @@ in a web browser the goto:
 
     http://127.0.0.1:8888
 
-Binder notebooks:
-[Binder Notebooks](https://mybinder.org/v2/gh/ECHOESProj/eo-notebooks/main)
 
 ![fds](images/Compass_Informatics_Tracsis_Colour.svg)
 
