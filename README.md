@@ -1,5 +1,8 @@
-# The ECHOES Earth Observation Processing Service 
-### *Develop Earth Observation Algorithms and Automate Processing in the Cloud*
+# The ECHOES Earth Observation Processing Service  
+
+* Develop Earth Observation Algorithms 
+* Automate the processing 
+* Process in the Cloud
 
 The ECHOES Earth Observation Processing Service has be developed to automate the processing of
 Copernicus data and provide an integrated environment for developing algorithms.
@@ -17,6 +20,8 @@ To view this documentation in a browser, install [docsify](https://docsify.js.or
 enter the command:
 
     docsify serve
+
+# Quick start
 
 ## Earth Observation Data
 
@@ -89,18 +94,10 @@ instance if required for large-scale processing. The price list is found here: h
 Users can use APIs to retrieve satellite data over their AOI and specific time range from full archives in a matter of
 seconds.
 
-The code in the Sentinel-Hub Customs Scripts repository, https://github.com/sentinel-hub/custom-scripts, 
-has been added to the eo-mosaics repository, so that the script can called via the command line. 
-This means that many EO products can be quickly implemented on the ECHOES platform. 
-
-eo-mosaics is run on the same VM as the eoian processing chain. When Sentinel Hub API is called, 
-the computation is done on the Sentinel Hub server, so that there is little burden on the server running eo-mosaics.  
-
 An additional benefit of using Sentinel Hub is that the EO data can be accessed as a data cube using X-Cube. 
 Data cubes provide convenient access to a time series of satellite images, 
 allowing computations across the time dimension, with raster alignment issues handled out of the box. 
-Data cubes will be used to provide information about changes over time and space on the ECHOES platform. 
-The Euro Data Cube (EDC) service [10] is used to provide access data cubes. EDC provides hosted Jupyter Notebooks for analysing EO data using Sentinel Hub and X-Cube. EDC is used for convenience and is not required to access the data cubes, as X-Cube can be called directly. 
+Data cubes will be used to provide information about changes over time and space.
 
 Alternatives to Sentinel Hub/X-Cube data cubes include Open Data Cube (ODC) and OpenEO. 
 Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-mosaics) and, 
@@ -141,7 +138,7 @@ challenge is to learn how to access, process, and store the data. Here are the t
 * GDAL
 
 
-## The ECHOES Earth Observation Processing Service 
+# Introduction to the ECHOES Earth Observation Processing Service 
 
 The challange is to...
 
@@ -149,7 +146,7 @@ The ECHOES Earth Observation (EO) Processing Service has been developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
 It is designed to run in the cloud.
 
-##  
+  
 
 The EO service can consume data from the Sentinel-Hub API or alternatively,
 satellite data stored on and object store on CREODIAS, or other compatible cloud services.
@@ -168,44 +165,65 @@ Advantages of using cloud services, such as Creodias and AWS, include:
 * they can take advantage of the satellite data available there
 * the size of the VMs can be increased or decreased as required
 
-# Quick start
+The processing chains generally genarate GeoTIFFs and store them 
+(and associated metadata) in S3 compatiable object storage.
+
+When running locally, [Minio](https://min.io/) can be used to provide an S3 compatible, locally hosted, object store.
+
 
 # The EO Processing Packages
 
-There are two separate processing chains used in the EO-Service: 
+This section outlines the Python code that has been developed to process the EO data.
+The code is used to process satellite data and the resulting output (generally GeoTIFFs) are stored in an object store.
 
-## [eoian](https://github.com/ECHOESProj/eoian)
+The processing chains are called remotely via webhooks 
+(see [Triggering the processing using webhook callbacks](#triggering-the-processing-using-webhook-callbacks)).
+Webhook callbacks are used by the ECHOES web app to trigger the processing, 
+for the requested ROI and dates, over the internet.
+The webhooks callback run the processing chain on the remote (CREODIAS) server, via CLIs.
+The two repos with code which provide CLIs, for the processing chains,
+and which may be called via the webhooks callback are:
+* [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
+* [eo-processors](https://github.com/ECHOESProj/eo-processors)
 
-eoian is used to process satellite data for the store (e.g. in the SAFE format for Sentinel-2 data).
+Alternatively, the CLI may be called directly (i.e. without webhhooks) on the machine on which they are deployed, 
+as described in [The command line interface](#the-command-line-interface).
 
-This Python package is used to access satellite data from the data store, 
-process the data store it.
+The eo-custom-scripts code (for which the EO processing is done on Sentinel Hub servers) has a single CLI,
+from which many EO processors may be called
+(see [Automation of the EO Custom Scripts repo](#automation-of-the-eo-custom-scripts-repo)).
 
-The processors that use the eoian package write the date to an object store
-and write the location of the objects to the terminal, 
-which can be used download the results.
-
+The eo-processors code has a CLI for each processor
+(see [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources)). 
+The processors consume EO data from various sources.
+Some of the processors consume data from CREODIAS object store (for example eo-processors/eo_processors/ndvi_satpy).
+In this case, the eoian code is used to automate the downloading, processing and storage of the results.
+ 
+The following Python packages are used for EO processing in ECHOES and their dependencies:
 ```mermaid
-graph TD
-A(Receive request) -->
-B[Search for satellite data] -->
-C[Process] -->
-id1[(Object store)]  
+stateDiagram-v2
+    eo_io --> eo_custom_scripts
+    eo_io --> eoian
+    eoian --> eo_processors
+    eo_io --> eo_processors
 ```
 
-![eoian block diagram](images/eoian-block-diagram.png)
+[eo-io](https://github.com/ECHOESProj/eo-io) is used to interface to the S3 object store.
+Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
+It is a lower level module, used by the other packages,
+to write the GeoTIFFs and metadata to S3.
 
-## [eo-processors](https://github.com/ECHOESProj/eo-processors)
-
-This package contains a collection of EO processors. 
-The processors use the Eoian package, xcube libary or Sentinel Hub API to generate results.
-The outputs of the processing chains are generally stored in the object store. 
-The processors that use the eoian package write the date to an object store
-and write the location of the objects to the terminal. 
-See the README of each of the processors for information on their usage. 
+[eoian](https://github.com/ECHOESProj/eoian]) 
+and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. S3 is available on AWS and an S3
+compatible object store is available on CREODIAS.
+It is described in [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
 
 
-## eo-custom-scripts
+## Automation of the EO Custom Scripts repo
+
+The code in the Sentinel-Hub Customs Scripts repository, https://github.com/sentinel-hub/custom-scripts, 
+has been added to the eo-mosaics repository, so that the script can be called via the command line. 
+This means that many EO products can be quickly implemented on the ECHOES platform. 
 
 With eo-custom-scripts, the processing is done on Sentinel-Hub's servers, whereas with eoian the processing is done locally. 
 Therefore, the machine requirements may be greater for the eoian processing chain, depending on the processing.
@@ -214,7 +232,6 @@ The figure below shows a chain block diagram for the eo-mosaics processing chain
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to CREODIAS,
 and cloud, for example, run on AWS. 
 To run on other cloud platforms, the credentials' file needs to be modified (see [Handling the credentials](#handling-the-credentials])). 
-
 
 ![eo-custom-scripts block diagram](images/eo-custom-scripts-block-diagram.png)
 
@@ -229,32 +246,61 @@ can be quickly implemented on the ECHOES platform.
 eo-processors and eo-custom-scripts can each be called by a CLI interface or imported as a Python module. See the README of
 [eo-processors](https://github.com/ECHOESProj/eo-processors) and [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 for information on their installation and usage. 
-The dependancy of the modules is shown in the following diagram:
 
-## Overview of Python modules
 
-The following Python packages are used for EO processing in ECHOES:
+## Processing of satellite files from the object store and other data sources
 
+[eoian](https://github.com/ECHOESProj/eoian)
+
+Examples of the code usage are given in the eo-processors repo see [eo-processors](#eo-processors). 
+
+eoian is used to process satellite data for the store (e.g. in the SAFE format for Sentinel-2 data).
+
+The following flowchart shows the steps involved:
 ```mermaid
-stateDiagram-v2
-    eo_io --> eo_custom_scripts
-    eo_io --> eoian
-    eoian --> eo_processors
-    eo_io --> eo_processors
+graph TD
+A(Receive request) -->
+B[Search for satellite data] -->
+C[Process] -->
+id1[(Object store)]  
 ```
+The eoian module is imported and the  
 
-[eo-io](https://github.com/ECHOESProj/eo-io) is used to interface to the S3 object store.
-It is a lower level module, used by the other packages,
-to write the GeoTIFFs and metadata to S3.
+The program can be run using a CLI (as described in Section [The command line interface](#the-command-line-interface),
+or if it is called remotely, 
+via webhooks (see [Calling the EO Service using webhooks](#calling-the-eo-service-using-webhooks))).
 
-The results of the EO processing (e.g. GeoTiffs) are stored in an object store. A third Python
-package, [eo-io](https://github.com/ECHOESProj/eo-io), is used
-by [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts), [eoian](https://github.com/ECHOESProj/eoian]) 
-and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. S3 is available on AWS and an S3
-compatible object store is available on CREODIAS. 
-When running locally, [Minio](https://min.io/) can be used to provide an S3 compatible, locally hosted, object store.
+The command line  or webhook call back arguments specifiy the name of the instrument, the Area Of Interest (AOI),
 
-## [websockets-server](https://github.com/ECHOESProj/websockets-server) (todo)
+
+This Python package is used to access satellite data from the data store, 
+process the data store it.
+
+The processors that use the eoian package write the date to an object store
+and write the location of the objects to the terminal, 
+which can be used download the results.
+
+
+![eoian block diagram](images/eoian-block-diagram.png)
+
+### Processors Repo
+
+[eo-processors](https://github.com/ECHOESProj/eo-processors)
+
+This package contains a collection of EO processors. 
+The processors use the Eoian package, xcube libary or Sentinel Hub API to generate results.
+The outputs of the processing chains are generally stored in the object store. 
+The processors that use the eoian package write the date to an object store
+and write the location of the objects to the terminal. 
+See the README of each of the processors for information on their usage. 
+
+
+
+
+## Triggering the processing using webhook callbacks
+
+[websockets-server](https://github.com/ECHOESProj/websockets-server) 
+
 
 ## The Development Environment & Deployment
 
@@ -285,11 +331,7 @@ SSH deploy keys are used to access the code on the VM.
 [The keys are located in the eo-playbooks repo](https://github.com/ECHOESProj/eo-playbooks/tree/main/roles/common/files)
 .
 
-### Jupyter Lab
 
-JupyterLab is used to prototype EO processors, before being added to the processing chain.
-
-TODO: https://....
 
 ## Automation of the dev environment using Ansible
 
@@ -326,8 +368,15 @@ to the following Ansible roles in the eo-playbooks repo:
 * roles/servers_no_s3/tasks/main.yml
 
 for the steps involved in decrypting and copying the credentials across.
+
+## Calling the EO service
+
+### The command line interface
+
+### Calling the EO Service using webhooks
+
           
-## Usage (Using Docker) 
+## Calling the EO service using Docker 
  
 After the development machine has been provisioned (see [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks)),
 login into the terminal and list the container images available, as follows:
@@ -355,14 +404,18 @@ See the README in these repositories for usage instructions.
  
 ## Jupyter Lab
 
+JupyterLab is used to prototype EO processors, before being added to the processing chain.
+
 Anisble installs JupyterLab on the remote machine. 
-It can be accessed via \<ip of remote machine>:8888>.
-However, it is not secured (via http and not https).
+It can be accessed via https://<ip of remote machine>:8888>.
+https://185.52.192.218:8888
+
+
 In order to access it securely, do the following:
 
 Execute the following:
 
-    ssh -i ~/.ssh/eo-stack.key -N -L 8888:localhost:8888 eouser@<ip-of-remote-server> &
+    ssh -i ~/.ssh/eo-stack.key -N -L 9999:localhost:7744 eouser@<ip-of-remote-server> &
 
 in a web browser the goto:
 
