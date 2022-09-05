@@ -7,10 +7,15 @@
 The ECHOES Earth Observation Processing Service has be developed to automate the processing of
 Copernicus data and provide an integrated environment for developing algorithms.
 
-It comprises Python packages to download and process satellite data.
+With the EO Service, Python packages download and process satellite data.
 It utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
 The service provides Jupyter notebooks to prototype EO processing algorithms.
 The services involve a number of steps to provision, and Ansible is used to automate this.
+
+The EO Service runs the processing for a specified interval and AOI.
+It does not provide scheduling the EO processing itself;
+the ECHOES web component does this with a program called eo-runner. 
+
 
 # This Document
 
@@ -223,13 +228,14 @@ compatible object store is available on CREODIAS.
 
 ## Automation of the EO Custom Scripts repo
 
-The code in the Sentinel-Hub Customs Scripts repository, https://github.com/sentinel-hub/custom-scripts, 
-has been added to the eo-custom-scripts repository, so that the script can be called via the command line. 
-This means that many EO products can be quickly implemented on the ECHOES platform. 
+The Sentinel-Hub Customs Scripts repository (https://github.com/sentinel-hub/custom-scripts) 
+is a collection of scripts which implement EO processors.
+The [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) 
+repository is used to call these scripts, via a CLI.
 
-With eo-custom-scripts, the processing is done on Sentinel-Hub's servers, whereas with eoian the processing is done locally. 
-Therefore, the machine requirements may be greater for the processors in eo-processors, 
-depending on the processing.
+With eo-custom-scripts, the processing is done on Sentinel-Hub's servers.
+Therefore a low spec VM can be used to run the 
+[Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) code. 
 
 The figure below shows a chain block diagram for the eo-custom-scripts processing chain, which generates GeoTIFFs using Sentinel-Hub. 
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to CREODIAS,
@@ -240,7 +246,7 @@ To run on other cloud platforms, the credentials' file needs to be modified (see
 
 An S3, compatible object store is required, 
 but if one is not available, Minio can be used (see [Object Storage](#object-storage)). 
-The code calls the Sentinel Hub API. The algorithm is implemented in JavaScript.
+The code calls the Sentinel Hub API.
 
 The code in the [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts), has been
 added to the eo-custom-scripts repository, so that the script can called via the command line. This enables many EO products
@@ -405,7 +411,10 @@ which can the used call the container with the environment file automatically pa
     eo-run eo-processors change_detection_s2_pca "POLYGON ((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01
                                                                                                                        
 See the README in these repositories for usage instructions.
- 
+
+# eo-tracking-matchup
+
+
 # Jupyter Lab
 
 JupyterLab is used to prototype EO processors, before being added to the processing chain.
@@ -446,4 +455,9 @@ in a web browser the goto:
 
 ![fds](images/ECHOES-Circular-Logo-EngWel_orange-1980x494.png)
 
+
+
+
 # List of EO Packages
+
+
