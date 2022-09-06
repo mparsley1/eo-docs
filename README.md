@@ -41,6 +41,7 @@ missions come online.
 <figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b></figcaption>
 </figure>
 
+
 Sentinel-1 and -2 can be downloaded from the [Copernicus Open Access Hub](https://scihub.copernicus.eu/) 
 in the Standard Archive Format (SAFE). 
 This format consists of a folder containing the image data in a binary data format and product metadata in XML. 
@@ -55,7 +56,6 @@ The Sentinel-2 L1C and L2A products are around 600 MB and 800 MB respectively.
     <img src="images/sentinel2tiles.png" alt="Forest" style="width:50%">
   </div>
 </div>
-
 
 
 Each Sentinel-2 product contains data covering a tile (also called a granule).
@@ -112,14 +112,14 @@ being a hosted service, it does not require additional infrastructure.
 
 Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR, Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2 products that are not available on Sentinel-Hub. 
 
-|                        | CREODIAS Object Store | 	Sentinel-Hub             |
-|------------------------|-----------------------|---------------------------|
-| Data Cap?              | No                    | Yes                       | 
-| Satellited Data Format | The original format (e.g. SAFE for the Sentinel | Python Interface and OGC  | 
-| Processing             | Up to the user to do the processing using e.g. SNAP  |  Algorithms are implement in JavaScript. A large number of existing algorithms are available on https://custom-scripts.sentinel-hub.com.  | 
+|                       | CREODIAS Object Store | 	Sentinel-Hub             |
+|-----------------------|-----------------------|---------------------------|
+| Data Cap?             | No                    | Yes                       | 
+| Satellite Data Format | The original format (e.g. SAFE for the Sentinel | Python Interface and OGC  | 
+| Processing            | Up to the user to do the processing using e.g. SNAP  |  Algorithms are implement in JavaScript. A large number of existing algorithms are available on https://custom-scripts.sentinel-hub.com.  | 
 | Cloud Masking built in?| No                      |  Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B  | 
-| Mosaicing built in?    | No                      |  Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B  | 
-| Datacubes access?      | No                      |  Yes for Sentinel-1, -2 & -3 (via X-Cube).              | 
+| Mosaicing built in?   | No                      |  Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B  | 
+| Datacubes access?     | No                      |  Yes for Sentinel-1, -2 & -3 (via X-Cube).              | 
 
 
 The eo-custom-scripts processing chain (which uses Sentinel-Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
@@ -224,6 +224,20 @@ to write the GeoTIFFs and metadata to S3.
 eo-io is used by [eoian](https://github.com/ECHOESProj/eoian]) 
 and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. S3 is available on AWS and an S3
 compatible object store is available on CREODIAS.
+The eo-runner process, running on a remote machine, calls the prod server, and therefore, 
+the outputs from the processing are stored in compass-eo.
+The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed. 
+
+The following diagram gives an overview of the EO Service architecture.
+
+![eo_service.drawio](images/eo_service.drawio.png)
+
+There are two VMs: dev and prod (development and production respectively). 
+Each VM consumes data from either the Sentinel Hub or satellite data stored in buckets.
+Each VM write to a bucket, but on the dev server the bucket is named eo-compass-dev,
+on the prod server the bucket is called eo-compass.
+On the dev server both the Docker containers and Python code is deployed to enable developement.
+On the prod server only the Docker containers are deployed.
 
 
 ## Automation of the EO Custom Scripts repo
