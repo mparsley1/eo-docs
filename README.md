@@ -228,11 +228,12 @@ The eo-runner process, running on a remote machine, calls the prod server, and t
 the outputs from the processing are stored in compass-eo.
 The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed. 
 
-The following diagram gives an overview of the EO Service architecture.
+The following diagram gives an overview of the EO Service achitecture at Compass Informatics.
 
 ![eo_service.drawio](images/eo_service.drawio.png)
 
-There are two VMs: dev and prod (development and production respectively). 
+There are two VMs: dev and prod (development and production respectively).
+These VMs are running on CREODIAS.
 Each VM consumes data from either the Sentinel Hub or satellite data stored in buckets.
 Each VM write to a bucket, but on the dev server the bucket is named eo-compass-dev,
 on the prod server the bucket is called eo-compass.
