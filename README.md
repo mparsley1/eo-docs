@@ -329,9 +329,6 @@ C[Process] -->
 D[(Object store)]  
 ```
 
-
-
-
 The program can be run using a CLI (as described in Section [The command line interface](#the-command-line-interface),
 or if it is called remotely, 
 via webhooks (see [Calling the EO Service using webhooks](#calling-the-eo-service-using-webhooks))).
@@ -382,7 +379,7 @@ The setup of the EO dev environment can be time-consuming. It involves the follo
 ## Docker containers
 
 Both eo-custom-scripts and eo-processors are containerised. 
-It is therefore a matter of building the containers, as described in the README of these packages. 
+It is therefore a matter of building the containers, as described in the readme of these packages. 
 To get the EO service up and running, we also need to build and run the websockets-server image and
 eo-stack, in addition to handling the credentials.
 Docker ensures that the code runs uniformly and consistently on the host machine or container service.
@@ -429,7 +426,6 @@ to the following Ansible roles in the eo-playbooks repo:
 for the steps involved in decrypting and copying the credentials across.
 
 
-
 # Calling the EO service
 
 ## The command line interface
@@ -442,7 +438,7 @@ The Ansible Playbook pulls the code from GitHub, in the following directory:
     /home/eouser/echoes-deploy
 
 ### eo-custom-scripts
-
+ 
 As an example, cd to
 
     /home/eouser/echoes-deploy/eo-custom-scripts
