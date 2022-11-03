@@ -453,33 +453,7 @@ The following gives usage instructions:
 
 or consult the readme of the eo-custom-scripts repository.
 
-### eo-processors
 
-The processors are in the  
-
-    python3 ndvi_satpy S2_MSI_L1C "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01 --cloud_cover=90
-
-
-Code
-
-    from eoian.core.processing_chain import ProcessingChain
-
-    processing_chain = ProcessingChain(instrument,
-                                       area_wkt,
-                                       start,
-                                       stop,
-                                       processing_func=func,
-                                       cloud_cover=cloud_cover,
-                                       graph_path=graph_path)
-
-
-    for d in processing_chain:
-        if to_tiff:
-            d.to_tiff()
-        if metadata_to_json:
-            d.metadata_to_json()
-        if to_zarr:
-            d.to_zarr()
 
 ## Webhooks callback
 
@@ -511,9 +485,6 @@ which can the used call the container with the environment file automatically pa
                                                                                                                        
 See the README in these repositories for usage instructions.
 
-# eo-tracking-matchup
-
-https://github.com/ECHOESProj/eo-tracking-matchup
 
 # Jupyter Lab
 
@@ -530,30 +501,67 @@ It can be accessed via
 The eo-io, eoian and eo-processors packages may be imported in the notebooks.
 Additionally, datacubes may be accessed via the xcube interface.
 
+## Bind ports
+
+Dask is a package for parallel computing that can be used to reduce the processing time.
+The Dask distributed scheduler provides an interactive dashboard,
+containing plots and tables with live information,
+for live feedback on the processing.
+
+The dashboard is accessible through the browser, on a specified port. 
+In order to access the dashboard, this port on the remote VM can be bound to your local machine.
+In order to do this, execute the following:
+
+    ssh -i ~/.ssh/eo-stack.key -N -L 9999:localhost:7744 eouser@<ip-of-remote-server> &
+
+in the web browser of your local machine goto:
+
+    http://127.0.0.1:8888
+
+where the dashboard should be accessable.
 
 # Binder notebooks
+
+Binder, is used to open  notebooks in an executable environment. 
+Whereas Jupyter Lab is a private developement environment, 
+Binder notebooks are public and provide a way of interacting with the notebooks.
 
 [Binder Notebooks](https://mybinder.org/v2/gh/ECHOESProj/eo-notebooks/main)
 
 
-# Binding ports
+## Develop Processors
 
-Execute the following:
+The processors are in the  
 
-    ssh -i ~/.ssh/eo-stack.key -N -L 9999:localhost:7744 eouser@<ip-of-remote-server> &
-
-in a web browser the goto:
-
-    http://127.0.0.1:8888
+    python3 ndvi_satpy S2_MSI_L1C "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01 --cloud_cover=90
 
 
-![fds](images/Compass_Informatics_Tracsis_Colour.svg)
+Code
 
-![fds](images/ECHOES-Circular-Logo-EngWel_orange-1980x494.png)
+    from eoian.core.processing_chain import ProcessingChain
+
+    processing_chain = ProcessingChain(instrument,
+                                       area_wkt,
+                                       start,
+                                       stop,
+                                       processing_func=func,
+                                       cloud_cover=cloud_cover,
+                                       graph_path=graph_path)
 
 
+    for d in processing_chain:
+        if to_tiff:
+            d.to_tiff()
+        if metadata_to_json:
+            d.metadata_to_json()
+        if to_zarr:
+            d.to_zarr()
 
+# eo-tracking-matchup
 
-# List of EO Packages
+The [eo-tracking-matchup repository](https://github.com/ECHOESProj/eo-tracking-matchup)
+is a standalone package for obtaining the cloest EO values for each coordinate in a CSV file.   
 
+It has been used to matchup Sentinel-2 NDMI values to a timeseries of bird tracking values.
 
+Usage instructions are given in the readme.
