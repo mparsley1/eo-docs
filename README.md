@@ -1,48 +1,45 @@
+<p align="center">
+<img src="images/c19Sbkgy_400x400.png" alt="drawing" width="180"/>
+</p>
+
 # The ECHOES Earth Observation Processing Service
+
 ***For the automation of satellite data processing in the processing in the cloud***
 
 The ECHOES Earth Observation Processing Service has been developed to automate the processing of
-Copernicus data and provide an integrated environment for developing algorithms.
+Copernicus data, and provide an integrated environment for developing algorithms,
+and analysing data.
+The provisioning of the service is automated with an Ansible Playbook. 
 
-EO Service, utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
+The EO Service, utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
+
 The service provides Jupyter notebooks to prototype EO processing algorithms.
 Ansible is used to automate the deployment and configuration of the service.
 
 The EO Service runs the processing for a specified interval and AOI.
 It does not provide scheduling of the EO processing itself;
-the ECHOES web component does this with a program called eo-runner. 
-
-
-# This Document
-
-This is the high-level documentation for the ECHOES Project code.
-
-To view this documentation in a browser, install [docsify](https://docsify.js.org/), cd to the eo-docs directory, and
-enter the command:
-
-    docsify serve
-
-# Quick start
+the ECHOES web component does this with a program called eo-runner.
 
 # Earth Observation Data
 
 Copernicus is the European Union's Earth observation programme.
 The data collected by the Sentinel missions are free to access, for any use, on Open Hub.
-By year-end 2020, the data volume totaled 24.87 PiB, with 7.65 PiB published in 2020 alone.
-The rate of increase in Earth Observation (EO) data volume is set to increase in the coming years as more Sentinel
-missions come online.
+[By year-end 2021, the data volume exceeded 30 PB, with a 7.5 PB/year rate if growth.](https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/AnnualReport2021/COPE-SERCO-RP-22-1312_-_Sentinel_Data_Access_Annual_Report_Y2021_merged_v1.1.pdf)
+This rate is set to increase in the coming years as more Sentinel missions are commissioned.
 
 <figure>
-<img src="images/esa_satellites.png" alt="Trulli" style="width:100%">
-<figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b></figcaption>
+<a href="https://www.esa.int/ESA_Multimedia/Images/2019/05/ESA-developed_Earth_observation_missions">
+<img src="images/ESA-developed_Earth_observation_missions.jpg" alt="Trulli" style="width:80%"></a>
+<figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b> </figcaption>
 </figure>
 
 The Sentinels are a family of satellite missions, developed and launched by ESA, 
 which provide earth observation data for the Copernicus programme.
-Each mission is part of a constellation of satellites, which fulfil revisit and coverage requirements,
-providing robust datasets for Copernicus services.
+Each mission in the constellation is designed to fulfil revisit and coverage requirements,
+They provide robust datasets for Copernicus services.
+The data can be used for any purpose, including commerical uses.
 
-These missions carry radar and multi-spectral imaging instruments, 
+The missions carry radar and multi-spectral imaging instruments, 
 for land, ocean and atmospheric monitoring.
 The instruments used in the ECHOES project are Sentinel-1 and -2.
 
@@ -51,10 +48,14 @@ The instruments used in the ECHOES project are Sentinel-1 and -2.
 
 **A polar-orbiting Synthetic Aperture Radar (SAR) imaging mission, for both land and ocean monitoring.**
 
-<img src="images/Sentinel_1-IMG_5874-white.jpg" alt="drawing" style="width:280px;"/>
+<figure>
+<a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/overview">
+<img src="images/Sentinel_1-IMG_5874-white.jpg" alt="Trulli" style="width:80%"></a>
+<figcaption align = "center"><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+</figure>
 
 The mission comprises two polar-orbiting satellites, 
-performing C-band synthetic aperture radar imaging.
+performing C-band Synthetic Aperture Radar (SAR) imaging.
 Being an active instrument, Sentinel-1 can operate data and night,
 and its measurements are not impacted by clouds, 
 as in the case for optical instruments.
@@ -72,17 +73,26 @@ Examples of thematic areas in which Sentinel-1 data are used are:
 * ship detection
 * mapping for forest, water and soil management
 
-The Sentinel-1 product files are 
-[Sentinel-1 KML files](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/observation-scenario/acquisition-segments)
+The KML files are available on
+[this page](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/observation-scenario/acquisition-segments)
+provide detailed information about the planned Sentinel-1 acquisitions.
+These files can be opened on Google Earth.  
 
-<img src="images/sentinel1kml.JPG" alt="Snow" style="width:50%">
+<figure>
+<img src="images/sentinel1kml.JPG" alt="Trulli" style="width:80%">
+<figcaption align = "center"><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+</figure>
 
 
 ## Sentinel-2
 
 **A polar-orbiting is a multispectral high-resolution imaging mission.**
 
-<img src="images/Sentinel-2.jpg" alt="drawing" style="width:300px;"/>
+<figure>
+<a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/overview">
+<img src="images/Sentinel-2_pillars.jpg" alt="Trulli" style="width:80%"></a>
+<figcaption align = "center"><b>Sentinel-2 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+</figure>
 
 Sentinel-2A was launched on 23 June 2015, followed by Sentinel-2B on 7 March 2017.
 
@@ -97,17 +107,39 @@ Examples of thematic areas in which Sentinel-1 data are used are:
 Sentinel-2's instrument has 13 spectral bands:
 four bands at 10 m, six bands at 20 m and three bands at 60 m spatial resolution.
 
-![](images/s2_bands.jpg)
+| Sentinel-2 Bands              | Central Wavelength (µm) | Resolution (m) |
+| ----------------------------- | ----------------------- | -------------- |
+| Band 1 - Coastal aerosol      | 0.443                   | 60             |
+| Band 2 - Blue                 | 0.49                    | 10             |
+| Band 3 - Green                | 0.56                    | 10             |
+| Band 4 - Red                  | 0.665                   | 10             |
+| Band 5 - Vegetation Red Edge  | 0.705                   | 20             |
+| Band 6 - Vegetation Red Edge  | 0.74                    | 20             |
+| Band 7 - Vegetation Red Edge  | 0.783                   | 20             |
+| Band 8 - NIR                  | 0.842                   | 10             |
+| Band 8A - Vegetation Red Edge | 0.865                   | 20             |
+| Band 9 - Water vapour         | 0.945                   | 60             |
+| Band 10 - SWIR - Cirrus       | 1.375                   | 60             |
+| Band 11 - SWIR                | 1.61                    | 20             |
+| Band 12 - SWIR                | 2.19                    | 20             |
 
 The orbital swath width is 290 km.
 
-Each Sentinel-2 product contains data covering a tile (also called a granule).
-The tile grid is available for download in the  .kml format and opened in Google Earth.
-
-Each tile is 100 km×100 km, with a 10 km overlap. 
+Each Sentinel-2 product contains data covering a tile.
+Each tile is 100 km × 100 km, with a 10 km overlap. 
 The tile covering Copenhagen, for example, is 33UUB.
+The tiles do not directly correspond to the aquisition swaths.
+The following figure shows the tiles aquisition swaths overlayed:
+<figure>
+<img src="images/s2_swath.jpg" alt="Forest" style="width:80%">
+<figcaption align = "center">
+<b>The Sentinel-2 Aquisitions from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
+The red grid boxes are the tile bounds. 
+</b></figcaption>
+</figure>
 
-<img src="images/sentinel2tiles.png" alt="Forest" style="width:50%">
+
+## Sentinel Product Files
 
 Sentinel-1 and -2 can be downloaded from the [Copernicus Open Access Hub](https://scihub.copernicus.eu/) 
 in the Standard Archive Format (SAFE). 
@@ -121,7 +153,7 @@ The Sentinel-2 L1C and L2A products are around 600 MB and 800 MB respectively.
 Processing EO data in the cloud has a number of advantages 
 over processing on a local machine or an on-premises server.
 Firstly, if the cloud provider provides access to the source EO data, 
-it may be downloaded from the object store more quickly 
+it may be retrieved from the object store more quickly 
 than downloading it from the Copernicus Open Access Hub.
 Other advantages in using a cloud provider to process satellite data include, 
 the ability to scale up the processing to multiple machines in a cost efficient way,
@@ -135,7 +167,7 @@ The other DIAS platforms are Mundi, ONDA, WEkEO and Sobloo.
 The DIAS systems provide access to EO Copernicus data. 
 The DIAS systems allow users to execute their applications in a cloud environment, and close to where data is stored. 
 
-The following data is available on the CREODIAS (see https://creodias.eu/data-offer): Sentinel-1 GRD, Sentinel-2,
+[The following data is available on the CREODIAS](https://creodias.eu/data-offer): Sentinel-1 GRD, Sentinel-2,
 Sentinel-3, new Sentinels (like 5P), ESA/Landsat, Envisat/Meris, full Sentinel-1 SLC for Europe and 6 months rolling
 archive for Sentinel-1 SLC outside Europe and elements of Copernicus Services.
 
@@ -144,14 +176,23 @@ The object store holds over 20 PB of data.
 It is possible to run Virtual Machine (VM) instances on a pay-per-use or fixed term basis. 
 The size of the virtual
 machines range from 1 (virtual) core and 1 GB of RAM to 24 cores and 496 GB or RAM. It is possible to spin up multiple
-instance if required for large-scale processing. The price list is found here at https://creodias.eu/price-list.
+instance if required for large-scale processing. The price list is found [here](https://creodias.eu/price-list).
 
 [Sentinel Hub](https://www.sentinel-hub.com/) is used in the EO Service 
-as an alternative method for accessing and processing data.
+as an alternative method for accessing and processing Copernicus (and other) data.
 Sentinel Hub is a multi-spectral and multi-temporal big data satellite imagery service.
 Users can use APIs to retrieve satellite data over their AOI and specific time range from full archives in a matter of seconds. 
 The processing is done on Sentinel Hub's servers.
 The service is subscription-based, with a quota of "processing units" available to the user every month.
+
+Sentinel Hub in used in the EO Service, 
+because the client application may request small AOIs.
+If the SAFE format data was used, 
+this would require a large amount of data to be downloaded and processed,
+whereas the Sentinel API only return the data that is requested for the AOI.
+It has cloud-masking and moisacing built in.
+The processing is done on the Sentinel Hub servers, 
+so the processing can be scaled up without needing to worry about infrastructure.
 
 An additional benefit of using Sentinel Hub is that the EO data can be accessed as a data cube using X-Cube. 
 Data cubes provide convenient access to a time series of satellite images, 
@@ -160,30 +201,29 @@ Data cubes will be used to provide information about changes over time and space
 
 Alternatives to Sentinel Hub/X-Cube data cubes include Open Data Cube (ODC) and OpenEO. 
 Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-custom-scripts) and, 
-being a hosted service, it does not require additional infrastructure.   
+being a hosted service, it does not require additional infrastructure.
+Whereas, to create a datacube with ODC to cover Ireland for one year, 
+for example, would require tens of terabytes of storage and a high spec VM.
 
-### A Comparison of CREODIAS and Sentinel Hub
+Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR, Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2 products that are not available on Sentinel Hub. 
 
-Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR, Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2 products that are not available on Sentinel-Hub. 
-
-|                         | CREODIAS Object Store                               | 	Sentinel-Hub                                                                                                                           |
-|-------------------------|-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| Data Cap?               | No                                                  | Yes                                                                                                                                     | 
-| Satellite Data Format   | The original format (e.g. SAFE for the Sentinel     | Python Interface and OGC                                                                                                                | 
-| Processing              | Up to the user to do the processing using e.g. SNAP | Algorithms are implement in JavaScript. A large number of existing algorithms are available on https://custom-scripts.sentinel-hub.com. | 
-| Cloud Masking built in? | No                                                  | Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B                                                                                   | 
-| Mosaicing built in?     | No                                                  | Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B                                                                                   | 
-| Datacubes access?       | No                                                  | Yes for Sentinel-1, -2 & -3 (via X-Cube).                                                                                               | 
+|                         | CREODIAS Object Store                               | 	Sentinel Hub                                                                                                                          |
+|-------------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| Data Cap?               | No                                                  | Yes                                                                                                                                    | 
+| Satellite Data Format   | The original format (e.g. SAFE for the Sentinel     | Python Interface and OGC                                                                                                               | 
+| Processing              | Up to the user to do the processing using e.g. SNAP | Algorithms are implement in JavaScript. [A large number of existing algorithms are available](https://custom-scripts.sentinel-hub.com) | 
+| Cloud Masking built in? | No                                                  | Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B                                                                                  | 
+| Mosaicing built in?     | No                                                  | Yes including for Sentinel-2 L1C, L2A & Sentine-3 L1B                                                                                  | 
+| Datacubes access?       | No                                                  | Yes for Sentinel-1, -2 & -3 (via X-Cube).                                                                                              | 
 
 
 # Introduction to the ECHOES Earth Observation Processing Service 
-  
 
 The ECHOES Earth Observation (EO) Processing Service has been developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
 It is designed to run in the cloud.
 
-The EO service can consume data from the Sentinel-Hub API or alternatively,
+The EO service can consume data from the Sentinel Hub API or alternatively,
 satellite data stored on and object store on CREODIAS, or other compatible cloud services.
 
 The EO service is decoupled for the web service and can be used independently of it.
@@ -198,7 +238,7 @@ The EO service does not do the scheduling of the processing; this is done by eo-
 The processing chains have been developed to run in the cloud. 
 Advantages of using cloud services, such as CREODIAS and AWS, include:
 * they can take advantage of the satellite data available there
-* the size of the VMs can be increased or decreased as required
+* the specifications of the VMs can be increased or decreased as required
 
 The processing chains generally genarate GeoTIFFs and store them 
 (and associated metadata) in S3 compatiable object storage.
@@ -249,7 +289,7 @@ The processors, themselves are in the [eo-processors](https://github.com/ECHOESP
 This code is described in 
 [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
 
-[eo-io](https://github.com/ECHOESProj/eo-io) is used to interface to the S3 object store.
+[eo-io](https://github.com/ECHOESProj/eo-io) is used to read and write to the S3 object store.
 Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
 It is a lower level module, used by the other packages,
 to write the GeoTIFFs and metadata to S3.
@@ -260,16 +300,26 @@ The eo-runner process, running on a remote machine, calls the prod server, and t
 the outputs from the processing are stored in compass-eo.
 The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed. 
 
-The eo-custom-scripts processing chain (which uses Sentinel-Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
+The eo-custom-scripts processing chain (which uses Sentinel Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
 It provides a convenient API for accessing and processing satellite data and has clouding mosaicing. 
-Using the API, only the data within the AOI is processed on the Sentinel-Hub server, 
+Using the API, only the data within the AOI is processed on the Sentinel Hub server, 
 which makes the processing much faster for smaller regions. This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM and it is not possible to just download the data within the AOI. 
 
-The eo-custom-scripts processing chain will generally be used in preference to the eoain processing chain; 
-however, one case for using the eoian processing chain, instead of eo-custom-scripts, 
-is where an algorithm implemented in SNAP [11] is required. 
-SNAP has many built-in algorithms which are not directly available in eo-custom-scripts. 
-For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be automated using eoian. In the case where collaborators from other institutions in the ECHOES project implement there processing using SNAP, the eoain processing chain will be used to automate it. Another case for using eoian in place of eo-custom-scripts is where a very large area or large time period needs to be processed. Sentinel Hub has a limited data allowance (which can be increased at an additional cost); however, this has not been an issue so far. Also, some EO data is available on the CREODIAS object store that is not available on Sentinel-Hub. For example, the Sentinel-3 Level-2 land and water products are not currently available on Sentinel Hub (only the Level-1 product is available on Sentinel-Hub but both the Level-1 and Level-2 products are on the CREODIAS object store) and these may be required on the ECHOES platform.  
+The eo-custom-scripts processing chain will generally be used in preference to the eoain processing chain;
+however, one case for using the eoian processing chain, instead of eo-custom-scripts,
+is where an algorithm implemented in SNAP [11] is required.
+SNAP has many built-in algorithms which are not directly available in eo-custom-scripts.
+For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be
+automated using eoian.
+In the case where collaborators from other institutions in the ECHOES project implement there processing using SNAP, the
+eoain processing chain will be used to automate it. Another case for using eoian in place of eo-custom-scripts is where
+a very large area or large time period needs to be processed.
+Sentinel Hub has a limited data allowance (which can be increased at an additional cost);
+however, this has not been an issue so far. 
+Also, some EO data is available on the CREODIAS object store that is not available on Sentinel Hub. 
+For example, the Sentinel-3 Level-2 land and water products are not currently available on
+Sentinel Hub (only the Level-1 product is available on Sentinel Hub, but both the Level-1 and Level-2 products are on the
+CREODIAS object store) and these may be required on the ECHOES platform.
 The eoian processing chain may be the best option for minimizing cost if a large area is required.
 
 The following diagram gives an overview of the EO Service architecture at Compass Informatics.
@@ -287,16 +337,14 @@ On the prod server only the Docker containers are deployed.
 
 ## Automation of the EO Custom Scripts repo
 
-The [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) 
-is a collection of scripts which implement EO processors.
-The [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) 
-repository is used to call these scripts, via a CLI.
+The [Sentinel Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) 
+is a collection of scripts which implement EO processors. 
+[This repository](https://github.com/sentinel-hub/custom-scripts) is used to call these scripts, via a CLI.
 
-With eo-custom-scripts, the processing is done on Sentinel-Hub's servers.
-Therefore, a low-spec VM can be used to run the 
-[Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) code. 
+With eo-custom-scripts, the processing is done on Sentinel Hub's servers.
+Therefore, a low-spec VM can be used to run the code.
 
-The figure below shows a chain block diagram for the eo-custom-scripts processing chain, which generates GeoTIFFs using Sentinel-Hub. 
+The figure below shows a chain block diagram for the eo-custom-scripts processing chain, which generates GeoTIFFs using Sentinel Hub. 
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to running CREODIAS,
 and it could run on, for example, AWS.
 To run on other cloud platforms, 
@@ -308,7 +356,7 @@ An S3, compatible object store is required,
 but if one is not available, Minio can be used (see [Object Storage](#object-storage)). 
 The code calls the Sentinel Hub API.
 
-The code in the [Sentinel-Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts), has been
+The code in the [Sentinel Hub Customs Scripts repository](https://github.com/Sentinel-Hub/custom-scripts), has been
 added to the eo-custom-scripts repository, so that the script can called via the command line. This enables many EO products
 can be quickly implemented on the ECHOES platform.
 
@@ -333,8 +381,8 @@ The program can be run using a CLI (as described in Section [The command line in
 or if it is called remotely, 
 via webhooks (see [Calling the EO Service using webhooks](#calling-the-eo-service-using-webhooks))).
 
-The command line  or webhook call back arguments specifiy the name of the instrument, the Area Of Interest (AOI),
-
+The command line or webhook call back arguments specify the name of the instrument, 
+processing module, the Area Of Interest (AOI) and other parameters.
 
 This Python package is used to access satellite data from the data store, 
 process the data store it.
@@ -343,13 +391,12 @@ The processors that use the eoian package write the date to an object store
 and write the location of the objects to the terminal, 
 which can be used download the results.
 
-
 ![eoian block diagram](images/eoian-block-diagram.png)
 
-### Processors Repo ([eo-processors](https://github.com/ECHOESProj/eo-processors))
+## Processors Repo ([eo-processors](https://github.com/ECHOESProj/eo-processors))
 
 This package contains a collection of EO processors. 
-The processors use the Eoian package, xcube libary or Sentinel Hub API to generate results.
+The processors use the Eoian package, xcube libary and/or Sentinel Hub API to generate results.
 The outputs of the processing chains are generally stored in the object store. 
 The processors that use the eoian package write the date to an object store
 and write the location of the objects to the terminal. 
@@ -379,67 +426,54 @@ The setup of the EO dev environment can be time-consuming. It involves the follo
 ## Docker containers
 
 Both eo-custom-scripts and eo-processors are containerised. 
-It is therefore a matter of building the containers, as described in the readme of these packages. 
+This ensures that the code runs uniformly and consistently on the host machine or container service.
 To get the EO service up and running, we also need to build and run the websockets-server image and
 eo-stack, in addition to handling the credentials.
-Docker ensures that the code runs uniformly and consistently on the host machine or container service.
+The containers can be built as described in the README of these packages,
+or it can be done using Ansible, as descrided in
+[Provisioning the servers using Ansible](#Provisioning-the-servers-using-Ansible).
 
 ## GitHub credentials
 
 SSH deploy keys are used to access the code on the VM.
 [The keys are located in the eo-playbooks repo](https://github.com/ECHOESProj/eo-playbooks/tree/main/roles/common/files)
 
-## Provisioning of the servers using Ansible
+## Provisioning the servers using Ansible
 
 Ansible is used to automate the setup of the development machines. The ansible playbooks are in
-the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo. See the README in the repo for the installation and
-usage instructions.
+the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo.
+See the README in the repo for the installation and usage instructions.
 
-## Handling the credentials
-
-The credentials are stored in yaml files in the eo-playbooks repository and are encrypted and the key to decrypt them is
-stored in the Compass account LastPass under Shared-ECHOES/eo-playbooks. The playbook is executed with the "--ask-pass"
-option, which prompts for the password. The credentials will be copied over to the remote machine and unencrypted. The
-credentials are stored in the eo-playbooks repo under:
-
-* roles/servers_creodias/files/config_eo_service.yml (the credentials for CREODAS)
-* roles/servers_no_s3/files/config_eo_service.yml (the credentials for a local machine, or one without S3 storage)
-* roles/common/files/id_rsa (the [GitHub ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)). TODO: update this
-
-If you want to use the code without using Ansible, you will need to decrypt the configuration
-files and copy the config files to the required directory (as described below).
-[See here for instructions on decrypting encrypted files.](https://docs.ansible.com/ansible/latest/user_guide/vault.html#decrypting-encrypted-files)
-
-Put the appropriate config_eo_service.yml configuration file in the user's home directory.
+![](images/playbook-opt.gif)
 
 To run the code using Docker, copy the config files and GitHub key to the credentials directory, for example,
-eo-custom-scripts\credentials. This is required because Docker cannot access files outside it's scope when building the
-image. The files in the credentials' directory are copied to the home directory in the container.
-
+eo-custom-scripts\credentials.
+This is required because Docker cannot access files outside its scope when building the image.
+The files in the credentials' directory are copied to the home directory in the container.
 It is not necessary to carry out these steps manually if you use Ansible. However, if you are doing them manually, refer
-to the following Ansible roles in the eo-playbooks repo:
-
-* roles/common/tasks/main.yml
-* roles/servers_creodias/tasks/main.yml
-* roles/servers_no_s3/tasks/main.yml
-
-for the steps involved in decrypting and copying the credentials across.
-
+to the roles Ansible roles, which show the steps involved.
 
 # Calling the EO service
+
 
 ## The command line interface
 
 The EO Service is designed to be called via Webhooks, when running operationally. 
-It can also be called via the CLI on the production or developement server, 
+It can also be called via the CLI on the production or development server, 
 where it is installed.
+
+The first step is to login into the VM, with:
+
+    ssh -i ~/.ssh/eo-stack.key eouser@<ip.of.vm>
+
+
 The Ansible Playbook pulls the code from GitHub, in the following directory:
 
     /home/eouser/echoes-deploy
 
 ### eo-custom-scripts
  
-As an example, cd to
+As an example, on the development machine, cd to
 
     /home/eouser/echoes-deploy/eo-custom-scripts
 
@@ -447,12 +481,31 @@ and run the eo-custom-scripts code by executing:
 
     python3 -m eo_custom_scripts sentinel2_l1c ndvi_greyscale "POLYGON((-6.377 52.344, -6.378 52.357, -6.355 52.357, -6.356 52.345, -6.377 52.344))" 2019-01-01 2019-12-31
 
+The location of the files on GitHub is return on Stdout.
+
+![](images/eo_custom_scripts.gif)
+
+
 The following gives usage instructions: 
 
      python3 -m eo_custom_scripts -h
 
 or consult the readme of the eo-custom-scripts repository.
 
+### eo-processors
+
+To run the eo-processors processors, on the development machine, cd to
+
+    /home/eouser/echoes-deploy/eo_processors/
+
+then run a processor.
+For example, you can run the NDVI processor with:
+
+    python3 ndvi_satpy S2_MSI_L1C "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01 --cloud_cover=90
+
+You can get usage instructions for the processors with: 
+
+    python3 ndvi_satpy -h
 
 
 ## Webhooks callback
@@ -488,20 +541,27 @@ See the README in these repositories for usage instructions.
 
 # Jupyter Lab
 
-The Ansible Playbook installs Jupyter Lab. JupyterLab is used to prototype EO processors, before being added to the processing chain.
+The Ansible Playbook installs Jupyter Lab.
+
+JupyterLab is used to prototype EO processors, before being added to the processing chain.
 It is installed by the Ansible Playbook (see [Automation of the EO Custom Scripts repo](#automation-of-the-eo-custom-scripts-repo))
 
 ![Juypter LAb](images/jupyter.JPG)
 
-Anisble installs JupyterLab on the remote machine. 
+The Anisble Playbook installs JupyterLab on the remote machine. 
 It can be accessed via
 
-    https://<ip of remote machine>:8888>.
+    https://<ip of remote machine>:8888.
 
 The eo-io, eoian and eo-processors packages may be imported in the notebooks.
-Additionally, datacubes may be accessed via the xcube interface.
 
-## Bind ports
+The Playbook sets environment variables, 
+so that the data may be accessed as datacubes, 
+via the xcube interface, or from Sentinel Hub directly.
+
+If the VM is on CREODAS, the Copernicus data is accessible on /eodata/ via the Jupyter Lab notebooks.
+
+## Binding ports
 
 Dask is a package for parallel computing that can be used to reduce the processing time.
 The Dask distributed scheduler provides an interactive dashboard,
@@ -518,44 +578,61 @@ in the web browser of your local machine goto:
 
     http://127.0.0.1:8888
 
-where the dashboard should be accessable.
+in order to access the dashboard.
 
 # Binder notebooks
 
-Binder, is used to open  notebooks in an executable environment. 
+Binder is used to open notebooks in an executable environment. 
 Whereas Jupyter Lab is a private developement environment, 
 Binder notebooks are public and provide a way of interacting with the notebooks.
 
 [Binder Notebooks](https://mybinder.org/v2/gh/ECHOESProj/eo-notebooks/main)
 
 
-## Develop Processors
+##  Processor Development 
 
-The processors are in the  
+The following example creates an NDVI product  
 
-    python3 ndvi_satpy S2_MSI_L1C "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01 --cloud_cover=90
+```python3
+from os.path import dirname
+from satpy import Scene, find_files_and_readers
+from shapely import wkt
+from eoian import utils
+from eoian import ProcessingChain
+  
 
+def main(input_file: str, area_wkt: str) -> "Dataset":
+    files = find_files_and_readers(base_dir=dirname(input_file), reader='msi_safe')
+    scn = Scene(filenames=files)
+    scn.load(['B04', 'B08'])
+    area = wkt.loads(area_wkt)
 
-Code
+    epsg = scn['B04'].area.crs.to_epsg()
+    xy_bbox = utils.get_bounds(area, epsg)
+    scn = scn.crop(xy_bbox=xy_bbox)
 
-    from eoian.core.processing_chain import ProcessingChain
+    extents = scn.finest_area().area_extent_ll
+    ad = utils.area_def(extents, 0.0001)
+    s = scn.resample(ad)
 
-    processing_chain = ProcessingChain(instrument,
-                                       area_wkt,
-                                       start,
-                                       stop,
-                                       processing_func=func,
-                                       cloud_cover=cloud_cover,
-                                       graph_path=graph_path)
+    ndvi = (s['B08'] - s['B04']) / (s['B08'] + s['B04'])
+    s['ndvi'] = ndvi
+    s['ndvi'].attrs['area'] = s['B08'].attrs['area']
+    del s['B04']
+    del s['B08']
+    return s
 
+instrument = "S2_MSI_L1C" 
+area_wkt = "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))"
+start, stop = "2021-01-09",  "2021-02-01"
 
-    for d in processing_chain:
-        if to_tiff:
-            d.to_tiff()
-        if metadata_to_json:
-            d.metadata_to_json()
-        if to_zarr:
-            d.to_zarr()
+processing_chain = ProcessingChain(instrument, processor, area_wkt, start, stop,
+                                   cloud_cover=cloud_cover, graph_path=graph_path)
+for d in processing_chain:
+    d.to_tiff()
+    d.metadata_to_json()
+```
+
 
 # eo-tracking-matchup
 
@@ -565,3 +642,4 @@ is a standalone package for obtaining the cloest EO values for each coordinate i
 It has been used to matchup Sentinel-2 NDMI values to a timeseries of bird tracking values.
 
 Usage instructions are given in the readme.
+
