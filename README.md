@@ -6,24 +6,26 @@
 
 ***For the automation of satellite data processing in the processing in the cloud***
 
-The ECHOES Earth Observation Processing Service has been developed to automate the processing of
+[The Sphinx-build version of this documentation is hosted by Compass Informatics]((https://docs.compass.ie/EarthObservationDocs/)). 
+
+The [ECHOES](https://echoesproj.eu/) Earth Observation Processing Service has been developed to automate the processing of
 Copernicus data, and provide an integrated environment for developing algorithms,
 and analysing data.
 The provisioning of the service is automated with an Ansible Playbook. 
 
-The EO Service, utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
-
-The service provides Jupyter notebooks to prototype EO processing algorithms.
+The Earth Observation (EO) Service, utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
+It provides Jupyter notebooks to prototype EO processing algorithms.
 Ansible is used to automate the deployment and configuration of the service.
 
-The EO Service runs the processing for a specified interval and AOI.
+The EO Service runs the processing for a specified interval and Area Of Interest (AOI).
 It does not provide scheduling of the EO processing itself;
 the ECHOES web component does this with a program called eo-runner.
 
 # Earth Observation Data
 
-Copernicus is the European Union's Earth observation programme.
-The data collected by the Sentinel missions are free to access, for any use, on Open Hub.
+[Copernicus](https://www.copernicus.eu/) is the European Union's Earth observation programme.
+The data collected by the Sentinel missions are free to access, for any use,
+on [Copernicus Open Access Hub](https://scihub.copernicus.eu/).
 [By year-end 2021, the data volume exceeded 30 PB, with a 7.5 PB/year rate if growth.](https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/AnnualReport2021/COPE-SERCO-RP-22-1312_-_Sentinel_Data_Access_Annual_Report_Y2021_merged_v1.1.pdf)
 This rate is set to increase in the coming years as more Sentinel missions are commissioned.
 
@@ -35,11 +37,12 @@ This rate is set to increase in the coming years as more Sentinel missions are c
 
 The Sentinels are a family of satellite missions, developed and launched by ESA, 
 which provide earth observation data for the Copernicus programme.
-Each mission in the constellation is designed to fulfil revisit and coverage requirements,
-They provide robust datasets for Copernicus services.
-The data can be used for any purpose, including commerical uses.
+Each mission in the constellation is designed to fulfil revisit and coverage requirements.
+They provide global coverage of robust and continous datasets for Copernicus services.
+The data is provided free of charge,
+enabling downstream (including commerical) services to be developed.
 
-The missions carry radar and multi-spectral imaging instruments, 
+The missions carry a range of sensors, including radar and multi-spectral imaging instruments, 
 for land, ocean and atmospheric monitoring.
 The instruments used in the ECHOES project are Sentinel-1 and -2.
 
@@ -155,10 +158,14 @@ over processing on a local machine or an on-premises server.
 Firstly, if the cloud provider provides access to the source EO data, 
 it may be retrieved from the object store more quickly 
 than downloading it from the Copernicus Open Access Hub.
+This is especially true for older data, 
+which can take up to 24 hours to retrieve from the archive.
 Other advantages in using a cloud provider to process satellite data include, 
 the ability to scale up the processing to multiple machines in a cost efficient way,
 and access to the services that they provide (hosted database, serverless computing etc.)
 which can help to make the processing more efficient. 
+
+## The DIAS cloud platforms
 
 The DIAS (Data and Information Access Services) cloud-based platforms, funded by the European
 Commission, was developed to facilitate and standardise the access to Copernicus data and information. 
@@ -178,6 +185,8 @@ The size of the virtual
 machines range from 1 (virtual) core and 1 GB of RAM to 24 cores and 496 GB or RAM. It is possible to spin up multiple
 instance if required for large-scale processing. The price list is found [here](https://creodias.eu/price-list).
 
+## Sentinel Hub
+
 [Sentinel Hub](https://www.sentinel-hub.com/) is used in the EO Service 
 as an alternative method for accessing and processing Copernicus (and other) data.
 Sentinel Hub is a multi-spectral and multi-temporal big data satellite imagery service.
@@ -185,19 +194,32 @@ Users can use APIs to retrieve satellite data over their AOI and specific time r
 The processing is done on Sentinel Hub's servers.
 The service is subscription-based, with a quota of "processing units" available to the user every month.
 
-Sentinel Hub in used in the EO Service, 
-because the client application may request small AOIs.
-If the SAFE format data was used, 
-this would require a large amount of data to be downloaded and processed,
-whereas the Sentinel API only return the data that is requested for the AOI.
-It has cloud-masking and moisacing built in.
-The processing is done on the Sentinel Hub servers, 
-so the processing can be scaled up without needing to worry about infrastructure.
+On of the reasons for selecting Sentinel Hub for use in the EO Service is the client application may request small AOIs.
+If the original satellite product (SAFE format data) were used, 
+it would require a large amount of data to be downloaded and processed;
+whereas, the Sentinel API only return the data that is requested for the AOI.
+Another selling point is that it has cloud-masking and moisacing built in.
+Also, the processing is done on the Sentinel Hub servers, 
+so the processing can be scaled up without needing to be concerned with about infrastructure.
 
-An additional benefit of using Sentinel Hub is that the EO data can be accessed as a data cube using X-Cube. 
+## Data Cubes
+
+A further benefit of using Sentinel Hub is that the EO data can be accessed as a data cube using
+[xcube](https://xcube.readthedocs.io/en/latest/),
+and the [xcube_sh](https://github.com/dcs4cop/xcube-sh) plugin, which enables xcube to work via the Sentinel Hub API. 
 Data cubes provide convenient access to a time series of satellite images, 
 allowing computations across the time dimension, with raster alignment issues handled out of the box. 
-Data cubes will be used to provide information about changes over time and space.
+These datacubes are returned as an [Xarray](https://docs.xarray.dev/en/stable/) objects. 
+Xarray is a very powerful library for handling these multi-dimensional arrays. 
+Xarray labels the dimensions and provides a convenient interface to,
+for example, select and apply operations to the data.
+ 
+
+The Ansible Playbook, used to provision the VMs, installs Juypter Lab on the development server
+and also configures the VM to use xcubes in the Jupyter notebooks
+(see [Provisioning the servers using Ansible](Provisioning-the-servers-using-Ansible])). 
+
+## A comparison of the options
 
 Alternatives to Sentinel Hub/X-Cube data cubes include Open Data Cube (ODC) and OpenEO. 
 Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-custom-scripts) and, 
@@ -217,7 +239,7 @@ Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 O
 | Datacubes access?       | No                                                  | Yes for Sentinel-1, -2 & -3 (via X-Cube).                                                                                              | 
 
 
-# Introduction to the ECHOES Earth Observation Processing Service 
+# The ECHOES Earth Observation Processing Service 
 
 The ECHOES Earth Observation (EO) Processing Service has been developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
@@ -230,23 +252,22 @@ The EO service is decoupled for the web service and can be used independently of
 It is containerised for portability and scalability.
 It is extendable, allowing further EO processors to be easily added.
 
-The EO service provides CLI for calling the EO processors.
+The EO service provides Command Line Interface (CLI) for calling the EO processors.
 The generated outputs (images, metadata, etc.) are stored in an S3 compatible object store.
 These are accessed by the ECHOES web component for display to users. 
 The EO service does not do the scheduling of the processing; this is done by eo-ruuner. 
 
-The processing chains have been developed to run in the cloud. 
-Advantages of using cloud services, such as CREODIAS and AWS, include:
-* they can take advantage of the satellite data available there
-* the specifications of the VMs can be increased or decreased as required
-
 The processing chains generally genarate GeoTIFFs and store them 
 (and associated metadata) in S3 compatiable object storage.
 
+The code had been tested on CREODIAS. 
+CREODIAS' object store is compatible with AWS' S3 object store.
+It should therefore be possible to run the code on AWS, 
+but this has not been tested at the time of writing.
 When running locally, [Minio](https://min.io/) can be used to provide an S3 compatible, locally hosted, object store.
+ 
 
-
-# The EO Processing Packages
+## The EO Processing Packages
 
 This section outlines the Python code that has been developed to process the EO data.
 The code is used to process satellite data and the resulting output (generally GeoTIFFs) are stored in an object store.
@@ -274,7 +295,8 @@ The processors consume EO data from various sources.
 Some of the processors consume data from CREODIAS object store (for example eo-processors/eo_processors/ndvi_satpy).
 In this case, the eoian code is used to automate the downloading, processing and storage of the results.
  
-The following Python packages are used for EO processing in ECHOES and their dependencies:
+The following diagram shows the main Python packages that have been developed 
+for EO service, with their dependencies:
 ```mermaid
 stateDiagram-v2
     eo_io --> eo_custom_scripts
@@ -294,33 +316,14 @@ Both eo-custom-scripts and the processors in eo-processor read and write to the 
 It is a lower level module, used by the other packages,
 to write the GeoTIFFs and metadata to S3.
 eo-io is used by [eoian](https://github.com/ECHOESProj/eoian]) 
-and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. S3 is available on AWS and an S3
-compatible object store is available on CREODIAS.
+and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. 
+S3 is the name of object storage service on AWS,
+and an S3 compatible object store is available on CREODIAS.
 The eo-runner process, running on a remote machine, calls the prod server, and therefore, 
 the outputs from the processing are stored in compass-eo.
-The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed. 
+The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed.
 
-The eo-custom-scripts processing chain (which uses Sentinel Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
-It provides a convenient API for accessing and processing satellite data and has clouding mosaicing. 
-Using the API, only the data within the AOI is processed on the Sentinel Hub server, 
-which makes the processing much faster for smaller regions. This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM and it is not possible to just download the data within the AOI. 
-
-The eo-custom-scripts processing chain will generally be used in preference to the eoain processing chain;
-however, one case for using the eoian processing chain, instead of eo-custom-scripts,
-is where an algorithm implemented in SNAP [11] is required.
-SNAP has many built-in algorithms which are not directly available in eo-custom-scripts.
-For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be
-automated using eoian.
-In the case where collaborators from other institutions in the ECHOES project implement there processing using SNAP, the
-eoain processing chain will be used to automate it. Another case for using eoian in place of eo-custom-scripts is where
-a very large area or large time period needs to be processed.
-Sentinel Hub has a limited data allowance (which can be increased at an additional cost);
-however, this has not been an issue so far. 
-Also, some EO data is available on the CREODIAS object store that is not available on Sentinel Hub. 
-For example, the Sentinel-3 Level-2 land and water products are not currently available on
-Sentinel Hub (only the Level-1 product is available on Sentinel Hub, but both the Level-1 and Level-2 products are on the
-CREODIAS object store) and these may be required on the ECHOES platform.
-The eoian processing chain may be the best option for minimizing cost if a large area is required.
+## The system architecture
 
 The following diagram gives an overview of the EO Service architecture at Compass Informatics.
 
@@ -334,8 +337,36 @@ on the prod server the bucket is called eo-compass.
 On the dev server, both the Docker containers and Python code is deployed to enable development.
 On the prod server only the Docker containers are deployed.
 
+## What processing chain should I use?
 
-## Automation of the EO Custom Scripts repo
+The [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
+processing chain (which uses Sentinel Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
+It provides a convenient API for accessing and processing satellite data and has clouding mosaicing. 
+Using the API, only the data within the AOI is processed on the Sentinel Hub server, 
+which makes the processing much faster for smaller regions. 
+This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM and it is not possible to just download the data within the AOI. 
+
+The eo-custom-scripts processing chain will generally be used in preference to the eoain processing chain;
+however, one case for using the eoian processing chain, instead of eo-custom-scripts,
+is where an algorithm implemented in [SNAP](https://step.esa.int/main/download/snap-download/) is required.
+SNAP has many built-in algorithms which are not directly available in eo-custom-scripts.
+For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be
+automated using eoian.
+The eo-processors package (which uses the eoian package) allows for more flexibility to use other processing package,
+including [SNAP](https://step.esa.int/main/download/snap-download/)
+and [Satpy](https://satpy.readthedocs.io/).
+
+Another case for using eo-processors and eoian, instead of eo-custom-scripts,
+is where a very large area or large time period needs to be processed.
+Sentinel Hub has a limited number of [processing units](https://docs.sentinel-hub.com/api/latest/api/overview/processing-unit/) (which can be increased at an additional cost). 
+Also, some EO data is available on the CREODIAS object store that is not available on Sentinel Hub. 
+For example, the Sentinel-3 Level-2 land and water products are not currently available on
+Sentinel Hub (only the Level-1 product is available on Sentinel Hub, but both the Level-1 and Level-2 products are on the
+CREODIAS object store) and these may be required on the ECHOES application.
+The eoian processing chain may be the best option for minimizing cost if a large area is required.
+
+
+## Automation of the Sentinel Hub processing (eo-custom-scripts)
 
 The [Sentinel Hub Customs Scripts repository](https://github.com/sentinel-hub/custom-scripts) 
 is a collection of scripts which implement EO processors. 
@@ -348,7 +379,7 @@ The figure below shows a chain block diagram for the eo-custom-scripts processin
 The diagram shows the code running on a VM on CREODIAS; however, it is not limited to running CREODIAS,
 and it could run on, for example, AWS.
 To run on other cloud platforms, 
-the credentials' file needs to be modified (see [Handling the credentials](#handling-the-credentials])). 
+the credentials file needs to be modified (see [Handling the credentials](#handling-the-credentials])). 
 
 ![eo-custom-scripts block diagram](images/eo-custom-scripts-block-diagram.png)
 
@@ -393,15 +424,16 @@ which can be used download the results.
 
 ![eoian block diagram](images/eoian-block-diagram.png)
 
-## Processors Repo ([eo-processors](https://github.com/ECHOESProj/eo-processors))
+## Processing Level-1 and -2 data using the eo-processors repo 
 
-This package contains a collection of EO processors. 
+This package contains a collection of ([eo-processors](https://github.com/ECHOESProj/eo-processors)) . 
 The processors use the Eoian package, xcube libary and/or Sentinel Hub API to generate results.
 The outputs of the processing chains are generally stored in the object store. 
 The processors that use the eoian package write the date to an object store
 and write the location of the objects to the terminal. 
 See the README of each of the processors for information on their usage. 
 
+See [Processor Development](#Processor-Development) for information on how to add your own processors. 
 
 ## Triggering the processing using webhook callbacks ([websockets-server](https://github.com/ECHOESProj/websockets-server) )
 
@@ -591,17 +623,34 @@ Binder notebooks are public and provide a way of interacting with the notebooks.
 
 ##  Processor Development 
 
-The following example creates an NDVI product  
+### eo-custom-scripts
+
+New processors can be added to eo-custom-scripts by modifying the source code. 
+The processors are located here:
+
+    eo-custom-scripts/eo_custom_scripts/custom_scripts
+
+Add the processor to the directory corresponding to the instrument that the processor will use.
+Name the script "script.js". 
+The script script is can now be called using the CLI. 
+
+
+## eo-processors, eoian & eo_io
+
+### Example: Create a processing chain using eoin
+
+The processor in eo-processors/eo_processors/ndvi_satpy generates Sentinel 2 NDVI GeoTIFFs. 
+The following example creates an NDVI product, without the CLI. 
 
 ```python3
 from os.path import dirname
 from satpy import Scene, find_files_and_readers
 from shapely import wkt
-from eoian import utils
-from eoian import ProcessingChain
+from eoian import ProcessingChain, utils
+import xarray as xr
   
 
-def main(input_file: str, area_wkt: str) -> "Dataset":
+def main(input_file: str, area_wkt: str) -> xr.Dataset:
     files = find_files_and_readers(base_dir=dirname(input_file), reader='msi_safe')
     scn = Scene(filenames=files)
     scn.load(['B04', 'B08'])
@@ -626,12 +675,54 @@ instrument = "S2_MSI_L1C"
 area_wkt = "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))"
 start, stop = "2021-01-09",  "2021-02-01"
 
-processing_chain = ProcessingChain(instrument, processor, area_wkt, start, stop,
+processing_chain = ProcessingChain(instrument, main, area_wkt, start, stop,
                                    cloud_cover=cloud_cover, graph_path=graph_path)
-for d in processing_chain:
-    d.to_tiff()
-    d.metadata_to_json()
+for result in processing_chain:
+    result.to_tiff()
+    result.metadata_to_json()
 ```
+The *main* function implements the procesor and returns a Xarray dataset with the results. 
+The main function is an argument of the *ProcessingChain* class.
+The for-loop interates over the *processing_chain* object,
+which yields a result object.
+The result object contains the processed dataset and methods to write write to the object store.
+The methods include:
+* *to_tiff()*
+* *to_zarr()* (experimental)
+* *metadata_to_json()*
+
+### Example: writing to the object store using eo_io
+
+In this example, we write to an object store.
+
+```python3
+    import eo_io
+
+    @dataclass
+    class Metadata(eo_io.metadata.BaseMetadata):
+        area_wkt: str
+        name: str
+        platform: str
+        instrument: str
+        processingLevel: str
+        date1: str
+        date2: str
+
+    def get_path(self):
+        return join(self.area_wkt, self.name, self.platform, self.instrument, self.processingLevel,
+                    f'{self.date1}_{self.date2}')
+    
+    def compute_dataset() -> xr.Dataset:
+        return ds
+    
+    dataset = compute_dataset()
+    metadata = Metadata(area_wkt, 'change', 'sentinel2', 'msi', 'S2L2A', date1, date2)
+    
+    store = eo_io.store_dataset.store(dataset, metadata)
+    store.to_tiff()
+```
+
+The eo_io module is used to write the data to the datastore.
 
 
 # eo-tracking-matchup
