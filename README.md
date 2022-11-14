@@ -1,6 +1,16 @@
-<p align="center">
+<html>
+<head>
+<style>
+h1 {text-align: center;}
+p {text-align: left;}
+div {text-align: left;}
+</style>
+</head>
+<body>
+
+<h1>
 <img src="images/c19Sbkgy_400x400.png" alt="drawing" width="180"/>
-</p>
+</h1>
 
 # The ECHOES Earth Observation Processing Service
 
@@ -32,7 +42,7 @@ This rate is set to increase in the coming years as more Sentinel missions are c
 <figure>
 <a href="https://www.esa.int/ESA_Multimedia/Images/2019/05/ESA-developed_Earth_observation_missions">
 <img src="images/ESA-developed_Earth_observation_missions.jpg" alt="Trulli" style="width:80%"></a>
-<figcaption align = "center"><b>© ESA, CC BY-SA 3.0 IGO</b> </figcaption>
+<figcaption><b>© ESA, CC BY-SA 3.0 IGO</b> </figcaption>
 </figure>
 
 The Sentinels are a family of satellite missions, developed and launched by ESA, 
@@ -54,7 +64,7 @@ The instruments used in the ECHOES project are Sentinel-1 and -2.
 <figure>
 <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/overview">
 <img src="images/Sentinel_1-IMG_5874-white.jpg" alt="Trulli" style="width:80%"></a>
-<figcaption align = "center"><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+<figcaption><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
 </figure>
 
 The mission comprises two polar-orbiting satellites, 
@@ -76,14 +86,17 @@ Examples of thematic areas in which Sentinel-1 data are used are:
 * ship detection
 * mapping for forest, water and soil management
 
-The KML files are available on
-[this page](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/observation-scenario/acquisition-segments)
+[These KML files](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/observation-scenario/acquisition-segments)
 provide detailed information about the planned Sentinel-1 acquisitions.
-These files can be opened on Google Earth.  
+These files can be opened with Google Earth.  
 
 <figure>
-<img src="images/sentinel1kml.JPG" alt="Trulli" style="width:80%">
-<figcaption align = "center"><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+<img src="images/s1_acquistions.jpg" alt="Trulli" style="width:80%">
+<figcaption>
+<b>The Sentinel-1 acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
+The red grid boxes are the tile bounds. 
+</b>
+</figcaption>
 </figure>
 
 
@@ -94,7 +107,7 @@ These files can be opened on Google Earth.
 <figure>
 <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/overview">
 <img src="images/Sentinel-2_pillars.jpg" alt="Trulli" style="width:80%"></a>
-<figcaption align = "center"><b>Sentinel-2 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+<figcaption><b>Sentinel-2 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
 </figure>
 
 Sentinel-2A was launched on 23 June 2015, followed by Sentinel-2B on 7 March 2017.
@@ -104,8 +117,6 @@ Examples of thematic areas in which Sentinel-1 data are used are:
 * Emergency management
 * Climate change
 * Marine 
-
-[Sentinel-2 KML files](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/acquisition-plans)
 
 Sentinel-2's instrument has 13 spectral bands:
 four bands at 10 m, six bands at 20 m and three bands at 60 m spatial resolution.
@@ -126,21 +137,22 @@ four bands at 10 m, six bands at 20 m and three bands at 60 m spatial resolution
 | Band 11 - SWIR                | 1.61                    | 20             |
 | Band 12 - SWIR                | 2.19                    | 20             |
 
-The orbital swath width is 290 km.
-
+Like Sentinel-1, Sentinel-2 is a polar orbit satellite. 
+It has an orbital swath width of 290 km.
 Each Sentinel-2 product contains data covering a tile.
 Each tile is 100 km × 100 km, with a 10 km overlap. 
 The tile covering Copenhagen, for example, is 33UUB.
 The tiles do not directly correspond to the aquisition swaths.
-The following figure shows the tiles aquisition swaths overlayed:
+The following figure shows the tiles and 
+[swaths]([Sentinel-2 KML files](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/acquisition-plans))overlayed:
+
 <figure>
 <img src="images/s2_swath.jpg" alt="Forest" style="width:80%">
-<figcaption align = "center">
-<b>The Sentinel-2 Aquisitions from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
-The red grid boxes are the tile bounds. 
-</b></figcaption>
+<figcaption>
+<b>The Sentinel-2 Acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
+The red grid boxes are the tile bounds.</b>
+</figcaption>
 </figure>
-
 
 ## Sentinel Product Files
 
@@ -149,7 +161,6 @@ in the Standard Archive Format (SAFE).
 This format consists of a folder containing the image data in a binary data format and product metadata in XML. 
 The Sentinel-1 GRD products are around 1.7 GB. 
 The Sentinel-2 L1C and L2A products are around 600 MB and 800 MB respectively.
-
 
 # Cloud processing
 
@@ -612,7 +623,7 @@ in the web browser of your local machine goto:
 
 in order to access the dashboard.
 
-# Binder notebooks
+## Binder notebooks
 
 Binder is used to open notebooks in an executable environment. 
 Whereas Jupyter Lab is a private developement environment, 
@@ -623,7 +634,7 @@ Binder notebooks are public and provide a way of interacting with the notebooks.
 
 ##  Processor Development 
 
-### eo-custom-scripts
+## eo-custom-scripts
 
 New processors can be added to eo-custom-scripts by modifying the source code. 
 The processors are located here:
@@ -631,13 +642,14 @@ The processors are located here:
     eo-custom-scripts/eo_custom_scripts/custom_scripts
 
 Add the processor to the directory corresponding to the instrument that the processor will use.
-Name the script "script.js". 
-The script script is can now be called using the CLI. 
+Add a directory with the name of the processor to the directory with the existing processors.
+In that directory add the processor and name it script "script.js". 
+The script can now be called using the CLI. 
 
 
 ## eo-processors, eoian & eo_io
 
-### Example: Create a processing chain using eoin
+### Example: create a processing chain using eoin
 
 The processor in eo-processors/eo_processors/ndvi_satpy generates Sentinel 2 NDVI GeoTIFFs. 
 The following example creates an NDVI product, without the CLI. 
@@ -649,7 +661,6 @@ from shapely import wkt
 from eoian import ProcessingChain, utils
 import xarray as xr
   
-
 def main(input_file: str, area_wkt: str) -> xr.Dataset:
     files = find_files_and_readers(base_dir=dirname(input_file), reader='msi_safe')
     scn = Scene(filenames=files)
@@ -675,8 +686,12 @@ instrument = "S2_MSI_L1C"
 area_wkt = "POLYGON((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))"
 start, stop = "2021-01-09",  "2021-02-01"
 
-processing_chain = ProcessingChain(instrument, main, area_wkt, start, stop,
-                                   cloud_cover=cloud_cover, graph_path=graph_path)
+processing_chain = ProcessingChain(instrument,
+                                   area_wkt,
+                                   start,
+                                   stop,
+                                   processing_func=main)
+
 for result in processing_chain:
     result.to_tiff()
     result.metadata_to_json()
