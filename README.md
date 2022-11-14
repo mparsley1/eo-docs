@@ -1,12 +1,3 @@
-<html>
-<head>
-<style>
-h1 {text-align: center;}
-p {text-align: left;}
-div {text-align: left;}
-</style>
-</head>
-<body>
 
 <h1>
 <img src="images/c19Sbkgy_400x400.png" alt="drawing" width="180"/>
