@@ -12,7 +12,7 @@
 The [ECHOES](https://echoesproj.eu/) Earth Observation Processing Service has been developed to automate the processing of
 Copernicus data, and provide an integrated environment for developing algorithms,
 and analysing data.
-The provisioning of the service is automated with an Ansible Playbook. 
+The provisioning of the service is automated. 
 
 The Earth Observation (EO) Service, utilizes cloud platforms to enable fast access to EO data and flexible access to processing power.
 It provides Jupyter notebooks to prototype EO processing algorithms.
@@ -37,7 +37,7 @@ This rate is set to increase in the coming years as more Sentinel missions are c
 </figure>
 
 The Sentinels are a family of satellite missions, developed and launched by ESA, 
-which provide earth observation data for the Copernicus programme.
+which provide earth observation data as part of the Copernicus programme.
 Each mission in the constellation is designed to fulfil revisit and coverage requirements.
 They provide global coverage of robust and continous datasets for Copernicus services.
 The data is provided free of charge,
@@ -45,7 +45,7 @@ enabling downstream (including commerical) services to be developed.
 
 The missions carry a range of sensors, including radar and multi-spectral imaging instruments, 
 for land, ocean and atmospheric monitoring.
-The instruments used in the ECHOES project are Sentinel-1 and -2.
+The missions used in the ECHOES project are Sentinel-1 and -2.
 
 
 ## Sentinel-1
@@ -60,9 +60,9 @@ The instruments used in the ECHOES project are Sentinel-1 and -2.
 
 The mission comprises two polar-orbiting satellites, 
 performing C-band Synthetic Aperture Radar (SAR) imaging.
-Being an active instrument, Sentinel-1 can operate data and night,
-and its measurements are not impacted by clouds, 
-as in the case for optical instruments.
+Being an active instrument, Sentinel-1 can operate data and night
+and its measurements are not impacted by clouds
+(as in the case for optical instruments).
 
 Sentinel-1A was launched on 3 April 2014 and Sentinel-1B on 25 April 2016.
 However, as of 2022, Sentinel-1B is non-operational, due to a power issue.
@@ -83,11 +83,9 @@ These files can be opened with Google Earth.
 
 <figure>
 <img src="images/s1_acquistions.jpg" alt="Trulli" style="width:80%">
-<figcaption>
-<b>The Sentinel-1 acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
-The red grid boxes are the tile bounds. 
-</b>
-</figcaption>
+<figcaption><b>
+The Sentinel-1 acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
+</b></figcaption>
 </figure>
 
 
@@ -98,7 +96,9 @@ The red grid boxes are the tile bounds.
 <figure>
 <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/overview">
 <img src="images/Sentinel-2_pillars.jpg" alt="Trulli" style="width:80%"></a>
-<figcaption><b>Sentinel-2 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
+<figcaption><b>
+Sentinel-2 (© ESA, CC BY-SA 3.0 IGO)
+</b></figcaption>
 </figure>
 
 Sentinel-2A was launched on 23 June 2015, followed by Sentinel-2B on 7 March 2017.
@@ -107,7 +107,7 @@ Examples of thematic areas in which Sentinel-1 data are used are:
 * Land monitoring
 * Emergency management
 * Climate change
-* Marine 
+* Maritime 
 
 Sentinel-2's instrument has 13 spectral bands:
 four bands at 10 m, six bands at 20 m and three bands at 60 m spatial resolution.
@@ -140,7 +140,7 @@ The following figure shows the tiles and
 <figure>
 <img src="images/s2_swath.jpg" alt="Forest" style="width:80%">
 <figcaption>
-<b>The Sentinel-2 Acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
+<b>The Sentinel-2 acquisitions covering Europe, from 2022-11-20 12:00 AM to 2022-11-23 12:00 AM.
 The red grid boxes are the tile bounds.</b>
 </figcaption>
 </figure>
@@ -196,13 +196,13 @@ Users can use APIs to retrieve satellite data over their AOI and specific time r
 The processing is done on Sentinel Hub's servers.
 The service is subscription-based, with a quota of "processing units" available to the user every month.
 
-On of the reasons for selecting Sentinel Hub for use in the EO Service is the client application may request small AOIs.
+One of the reasons for selecting Sentinel Hub for use in the EO Service is the client application may request small AOIs.
 If the original satellite product (SAFE format data) were used, 
 it would require a large amount of data to be downloaded and processed;
 whereas, the Sentinel API only return the data that is requested for the AOI.
 Another selling point is that it has cloud-masking and moisacing built in.
 Also, the processing is done on the Sentinel Hub servers, 
-so the processing can be scaled up without needing to be concerned with about infrastructure.
+so the processing can be scaled up without needing to be concerned about managing the infrastructure.
 
 ## Data Cubes
 
@@ -216,9 +216,8 @@ Xarray is a very powerful library for handling these multi-dimensional arrays.
 Xarray labels the dimensions and provides a convenient interface to,
 for example, select and apply operations to the data.
  
-
 The Ansible Playbook, used to provision the VMs, installs Juypter Lab on the development server
-and also configures the VM to use xcubes in the Jupyter notebooks
+and also configures the VM so that xcube can be used in the Jupyter notebooks
 (see [Provisioning the servers using Ansible](Provisioning-the-servers-using-Ansible])). 
 
 ## A comparison of the options
@@ -257,9 +256,10 @@ It is extendable, allowing further EO processors to be easily added.
 The EO service provides Command Line Interface (CLI) for calling the EO processors.
 The generated outputs (images, metadata, etc.) are stored in an S3 compatible object store.
 These are accessed by the ECHOES web component for display to users. 
-The EO service does not do the scheduling of the processing; this is done by eo-ruuner. 
+The EO service is not reponsible for scheduling of the processing;
+this is done by the web-component, with the eo-ruuner module. 
 
-The processing chains generally genarate GeoTIFFs and store them 
+The processing chains genarate GeoTIFFs (or other formats) and store them 
 (and associated metadata) in S3 compatiable object storage.
 
 The code had been tested on CREODIAS. 
@@ -272,7 +272,8 @@ When running locally, [Minio](https://min.io/) can be used to provide an S3 comp
 ## The EO Processing Packages
 
 This section outlines the Python code that has been developed to process the EO data.
-The code is used to process satellite data and the resulting output (generally GeoTIFFs) are stored in an object store.
+
+### The top-level packages
 
 The processing chains are called remotely via webhooks 
 (see [Triggering the processing using webhook callbacks](#triggering-the-processing-using-webhook-callbacks)).
@@ -296,7 +297,9 @@ The eo-processors code has a CLI for each processor
 The processors consume EO data from various sources.
 Some of the processors consume data from CREODIAS object store (for example eo-processors/eo_processors/ndvi_satpy).
 In this case, the eoian code is used to automate the downloading, processing and storage of the results.
- 
+
+### The modules 
+
 The following diagram shows the main Python packages that have been developed 
 for EO service, with their dependencies:
 ```mermaid
@@ -398,7 +401,11 @@ See the README of [eo-processors](https://github.com/ECHOESProj/eo-processors) a
 for information on their installation and usage. 
 
 
-## Processing of satellite files from the object store and other data sources, using [eoian](https://github.com/ECHOESProj/eoian)
+## Processing source satellite files with eoian
+
+The Sentinel-1 and -2 data are stored in the SAFE format in the CREODIAS object store.
+The [eoian](https://github.com/ECHOESProj/eoian) processing chain is used to automate the processing to this,
+and other data, in the object store.
 
 The eoian module the processing is done in the following sequence:  
 
@@ -426,7 +433,7 @@ which can be used download the results.
 
 ![eoian block diagram](images/eoian-block-diagram.png)
 
-## Processing Level-1 and -2 data using the eo-processors repo 
+## The processor in the eo-processors repo  
 
 This package contains a collection of ([eo-processors](https://github.com/ECHOESProj/eo-processors)) . 
 The processors use the Eoian package, xcube libary and/or Sentinel Hub API to generate results.
@@ -437,10 +444,11 @@ See the README of each of the processors for information on their usage.
 
 See [Processor Development](#Processor-Development) for information on how to add your own processors. 
 
-## Triggering the processing using webhook callbacks ([websockets-server](https://github.com/ECHOESProj/websockets-server) )
+## Triggering the processing using webhook callbacks (websockets-server)
+
+The [websockets-server](https://github.com/ECHOESProj/websockets-server) ... 
 
 *To be added*
-
 
 # The Development Environment & Deployment
 
@@ -488,7 +496,6 @@ It is not necessary to carry out these steps manually if you use Ansible. Howeve
 to the roles Ansible roles, which show the steps involved.
 
 # Calling the EO service
-
 
 ## The command line interface
 
@@ -541,11 +548,6 @@ You can get usage instructions for the processors with:
 
     python3 ndvi_satpy -h
 
-
-## Webhooks callback
-
-*To be added*
-
 ## Docker 
  
 After the development machine has been provisioned (see [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks)),
@@ -572,6 +574,9 @@ which can the used call the container with the environment file automatically pa
                                                                                                                        
 See the README in these repositories for usage instructions.
 
+## Webhooks callback
+
+*To be added*
 
 # Jupyter Lab
 
