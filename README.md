@@ -47,7 +47,6 @@ The missions carry a range of sensors, including for radar and multi-spectral im
 They are used for land, ocean and atmospheric monitoring.
 The missions used in the ECHOES project are Sentinel-1 and -2.
 
-
 ## Sentinel-1
 
 **A polar-orbiting Synthetic Aperture Radar (SAR) imaging mission, for both land and ocean monitoring.**
@@ -279,6 +278,33 @@ When running locally, [Minio](https://min.io/) can be used to provide an S3 comp
 
 This section give an overview of the Python code that has been developed to process the EO data.
 
+The following diagram shows the main Python packages that have been developed 
+for EO service, with their dependencies:
+```mermaid
+stateDiagram-v2
+    eo_io --> eo_custom_scripts
+    eo_io --> eoian
+    eoian --> eo_processors
+    eo_io --> eo_processors
+```
+### The lower-level packages
+
+[eo-io](https://github.com/ECHOESProj/eo-io) is used to read and write to the S3 object store.
+Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
+eo-io is is a low-level package,
+used by [eoian](https://github.com/ECHOESProj/eoian]) 
+and [eo-processors](https://github.com/ECHOESProj/eo-processors),
+to write the GeoTIFFs and metadata to S3. 
+S3 is the name of object storage service on AWS,
+and a S3 compatible object store is available on CREODIAS.
+
+[eoian](https://github.com/ECHOESProj/eoian]) is used to download,
+process and store the satellite from the CREODIAS object store.
+The processors, themselves are in the [eo-processors](https://github.com/ECHOESProj/eo-processors) repo.
+This code is described in 
+[Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
+
+
 ### The top-level packages
 
 The processing chains are called remotely via webhooks 
@@ -301,38 +327,9 @@ from which many EO processors may be called
 The eo-processors code has a CLI for each processor
 (see [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources)). 
 The processors consume EO data from various sources.
-Some of the processors consume data from CREODIAS object store (for example eo-processors/eo_processors/ndvi_satpy).
-In this case, the eoian code is used to automate the downloading, processing and storage of the results.
-
-### The lower-level packages 
-
-The following diagram shows the main Python packages that have been developed 
-for EO service, with their dependencies:
-```mermaid
-stateDiagram-v2
-    eo_io --> eo_custom_scripts
-    eo_io --> eoian
-    eoian --> eo_processors
-    eo_io --> eo_processors
-```
-
-[eoian](https://github.com/ECHOESProj/eoian]) is used to download,
-process and store the satellite from the CREODIAS object store.
-The processors, themselves are in the [eo-processors](https://github.com/ECHOESProj/eo-processors) repo.
-This code is described in 
-[Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources). 
-
-[eo-io](https://github.com/ECHOESProj/eo-io) is used to read and write to the S3 object store.
-Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
-eo-io is is a low-level package,
-used by [eoian](https://github.com/ECHOESProj/eoian]) 
-and [eo-processors](https://github.com/ECHOESProj/eo-processors),
-to write the GeoTIFFs and metadata to S3. 
-S3 is the name of object storage service on AWS,
-and an S3 compatible object store is available on CREODIAS.
-The eo-runner process, running on a remote machine, calls the prod server, and therefore, 
-the outputs from the processing are stored in compass-eo.
-The compass-eo-dev bucket is used for testing purposes and the data in it can be deleted as needed.
+For example, from CREODIAS object store
+(as is the case for eo-processors/eo_processors/ndvi_satpy,
+where the eoian code is used to automate the downloading, processing and storage of the results).
 
 ## The system architecture
 
@@ -345,17 +342,19 @@ These VMs are running on CREODIAS.
 Each VM consumes data from either the Sentinel Hub or satellite data stored in buckets.
 Each VM writes to a bucket, but on the dev server the bucket is named eo-compass-dev,
 on the prod server the bucket is called eo-compass.
+
 On the dev server, both the Docker containers and Python code is deployed to enable development.
 On the prod server only the Docker containers are deployed.
 
-## What processing chain should I use?
+## Which processing chain should I use?
 
 The [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 processing chain (which uses Sentinel Hub) has a number of advantages over the eoain processing chain (which uses the CREODIAS object store EO files). 
 It provides a convenient API for accessing and processing satellite data and has clouding mosaicing. 
 Using the API, only the data within the AOI is processed on the Sentinel Hub server, 
 which makes the processing much faster for smaller regions. 
-This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM and it is not possible to just download the data within the AOI. 
+This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM,
+and it is not possible to just download the data within the AOI. 
 
 eo-custom-scripts is the main processing chain code used in the EO Service;
 however, one case for using the eoian processing chain, in preference to eo-custom-scripts,
@@ -424,7 +423,7 @@ D[(Object store)]
 
 The program can be run using a CLI (as described in Section [The command line interface](#the-command-line-interface),
 or if it is called remotely, 
-via webhooks (see [Calling the EO Service using webhooks](#calling-the-eo-service-using-webhooks))).
+via webhooks (see [Calling the EO Service using webhooks](#calling-the-eo-service-using-webhooks)).
 
 The command line or webhook call back arguments specify the name of the instrument, 
 processing module, the Area Of Interest (AOI) and other parameters.
@@ -469,11 +468,13 @@ The setup of the EO dev environment can be time-consuming. It involves the follo
 
 Both eo-custom-scripts and eo-processors are containerised. 
 This ensures that the code runs uniformly and consistently on the host machine or container service.
-To get the EO service up and running, we also need to build and run the websockets-server image and
+
+To get the EO service up and running, it is necessary to build and run the websockets-server image and
 eo-stack, in addition to handling the credentials.
-The containers can be built as described in the README of these packages,
-or it can be done using Ansible, as descrided in
-[Provisioning the servers using Ansible](#Provisioning-the-servers-using-Ansible).
+The containers can be built as described in the README of these packages.
+However, this is not necessary,
+as checking out the code and building the containers, etc. is automated with an Ansible Playbook, 
+as descrided in [Provisioning the servers using Ansible](#Provisioning-the-servers-using-Ansible).
 
 ## GitHub credentials
 
@@ -508,7 +509,8 @@ The first step is to login into the VM, with:
     ssh -i ~/.ssh/eo-stack.key eouser@<ip.of.vm>
 
 
-The Ansible Playbook pulls the code from GitHub, in the following directory:
+The Ansible Playbook clones GitHub repos,
+and saves the source code in the following directory:
 
     /home/eouser/echoes-deploy
 
@@ -525,7 +527,6 @@ and run the eo-custom-scripts code by executing:
 The location of the files on GitHub is return on Stdout.
 
 ![](images/eo_custom_scripts.gif)
-
 
 The following gives usage instructions: 
 
@@ -572,7 +573,7 @@ which can the used call the container with the environment file automatically pa
 
     eo-run eo-processors change_detection_s2_pca "POLYGON ((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))" 2021-01-09 2021-02-01
                                                                                                                        
-See the README in these repositories for usage instructions.
+See the readme in these repositories for usage instructions.
 
 ## Triggering the processing using webhook callbacks (websockets-server)
 
@@ -600,7 +601,7 @@ The Playbook sets environment variables,
 so that the data may be accessed as datacubes, 
 via the xcube interface, or from Sentinel Hub directly.
 
-If the VM is on CREODAS, the Copernicus data is accessible on /eodata/ via the Jupyter Lab notebooks.
+If the VM is running on CREODIAS, the Copernicus, and other EO data is accessible on /eodata/ via the Jupyter Lab notebooks.
 
 ## Binding ports
 
@@ -617,7 +618,7 @@ In order to do this, execute the following:
 
 in the web browser of your local machine goto:
 
-    http://127.0.0.1:8888
+    http://127.0.0.1:9999
 
 in order to access the dashboard.
 
@@ -650,7 +651,7 @@ The script can the be called via the CLI.
 ### Example: create a processing chain using eoin
 
 The processor in eo-processors/eo_processors/ndvi_satpy generates Sentinel 2 NDVI GeoTIFFs. 
-The following example creates an NDVI product, without the CLI. 
+The following example creates an NDVI product (without the CLI). 
 
 ```python3
 from os.path import dirname
