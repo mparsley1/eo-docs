@@ -150,7 +150,7 @@ The red grid boxes are the tile bounds.</b>
 
 Sentinel-1 and -2 can be downloaded from the [Copernicus Open Access Hub](https://scihub.copernicus.eu/) 
 in the Standard Archive Format (SAFE). 
-This format consists of a folder containing the image data in a binary data format and product metadata in XML. 
+This format consists of a directory containing binary image data, and metadata in XML files. 
 The Sentinel-1 GRD products are around 1.7 GB. 
 The Sentinel-2 L1C and L2A products are around 600 MB and 800 MB respectively.
 
@@ -197,7 +197,7 @@ instance if required for large-scale processing. The price list is found [here](
 [Sentinel Hub](https://www.sentinel-hub.com/) is a multi-spectral and multi-temporal big data satellite imagery service.
 It is used in the EO Service for accessing and processing Copernicus (and other) data.
 
-Processed satellite imagery is accessed via APIs for the specified AOI and time range,
+Processed satellite imagery is accessed via APIs for the requested AOI and time range,
 from the full archive, in a matter of seconds. 
 The processing is done on Sentinel Hub's servers.
 The service is subscription-based, with a quota of "processing units" available to the user every month.
@@ -218,9 +218,9 @@ and the [xcube_sh](https://github.com/dcs4cop/xcube-sh) plugin, which enables xc
 Data cubes provide convenient access to a time series of satellite images, 
 allowing computations across the time dimension, with raster alignment issues handled out of the box. 
 These datacubes are returned as [Xarray](https://docs.xarray.dev/en/stable/) objects. 
-Xarray is a very powerful library for handling these multidimensional arrays. 
+Xarray is a powerful library for handling multidimensional arrays. 
 Xarray labels the dimensions and provides a convenient interface to select and apply operations to the data.
-These operations can be applied to large datasets using multiple cores, using Dask.
+With Xarray, these operations can be applied to large datasets using multiple cores, using Dask.
  
 The Ansible Playbook, used to provision the VMs, installs Juypter Lab on the development server
 and also configures the VM so that xcube can be used in the Jupyter notebooks
@@ -234,7 +234,7 @@ being a hosted service, it does not require additional infrastructure.
 Whereas, to create a datacube with ODC to cover Ireland for one year, 
 for example, would require tens of terabytes of storage and a high spec VM.
 
-Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR, Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2 products that are not available on Sentinel Hub. 
+Both CREODIAS and Sentinel Hub provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR, Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2 products that are not available on Sentinel Hub. 
 
 |                         | CREODIAS Object Store                               | 	Sentinel Hub                                                                                                                          |
 |-------------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
@@ -248,7 +248,7 @@ Both CREODIAS provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 O
 
 # The ECHOES Earth Observation Processing Service 
 
-The ECHOES Earth Observation (EO) Processing Service has been developed to
+The ECHOES Earth Observation (EO) Processing Service was developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
 It is designed to run in the cloud.
 
@@ -324,10 +324,10 @@ This code is described in
 
 [eo-io](https://github.com/ECHOESProj/eo-io) is used to read and write to the S3 object store.
 Both eo-custom-scripts and the processors in eo-processor read and write to the object store using the eo-io package.
-It is a lower level module, used by the other packages,
-to write the GeoTIFFs and metadata to S3.
-eo-io is used by [eoian](https://github.com/ECHOESProj/eoian]) 
-and [eo-processors](https://github.com/ECHOESProj/eo-processors) to store the results in S3. 
+eo-io is is a low-level package,
+used by [eoian](https://github.com/ECHOESProj/eoian]) 
+and [eo-processors](https://github.com/ECHOESProj/eo-processors),
+to write the GeoTIFFs and metadata to S3. 
 S3 is the name of object storage service on AWS,
 and an S3 compatible object store is available on CREODIAS.
 The eo-runner process, running on a remote machine, calls the prod server, and therefore, 
@@ -449,11 +449,6 @@ See the README of each of the processors for information on their usage.
 
 See [Processor Development](#Processor-Development) for information on how to add your own processors. 
 
-## Triggering the processing using webhook callbacks (websockets-server)
-
-The [websockets-server](https://github.com/ECHOESProj/websockets-server) ... 
-
-*To be added*
 
 # The Development Environment & Deployment
 
@@ -579,7 +574,9 @@ which can the used call the container with the environment file automatically pa
                                                                                                                        
 See the README in these repositories for usage instructions.
 
-## Webhooks callback
+## Triggering the processing using webhook callbacks (websockets-server)
+
+The [websockets-server](https://github.com/ECHOESProj/websockets-server) ... 
 
 *To be added*
 
