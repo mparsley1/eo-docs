@@ -308,7 +308,7 @@ and a S3 compatible object store is available on CREODIAS.
 
 [eoian](https://github.com/ECHOESProj/eoian]) is used to download,
 process and store the satellite from the CREODIAS object store.
-The processors, themselves are in the [eo-processors](https://github.com/ECHOESProj/eo-processors) repo.
+The processors, themselves are in the [eo-processors](https://github.com/ECHOESProj/eo-processors) repository.
 This code is described in
 [Processing of satellite files from the object store and other data sources](#processing-of-satellite-files-from-the-object-store-and-other-data-sources)
 .
@@ -320,7 +320,7 @@ The processing chains are called remotely via webhooks
 Webhook callbacks are used by the ECHOES web app to trigger the processing,
 for the requested AOI and dates, over the internet.
 The webhooks callback run the processing chains on the remote (CREODIAS) server, via CLIs.
-The two repos with code which provide CLIs, for the processing chains,
+The two repositorys with code which provide CLIs, for the processing chains,
 and which may be called via the webhooks callback are:
 
 * [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
@@ -331,7 +331,7 @@ as described in [The command line interface](#the-command-line-interface).
 
 The eo-custom-scripts code (for which the EO processing is done on Sentinel Hub servers) has a single CLI,
 from which many EO processors may be called
-(see [Automation of the EO Custom Scripts repo](#automation-of-the-eo-custom-scripts-repo)).
+(see [Automation of the EO Custom Scripts repository](#automation-of-the-eo-custom-scripts-repo)).
 
 The eo-processors code has a CLI for each processor
 (
@@ -454,7 +454,7 @@ which can be used download the results.
 
 ![eoian block diagram](images/eoian-block-diagram.png)
 
-## The processor in the eo-processors repo
+## The processor in the eo-processors repository
 
 This package contains a collection of ([eo-processors](https://github.com/ECHOESProj/eo-processors)) .
 The processors use the Eoian package, xcube libary and/or Sentinel Hub API to generate results.
@@ -486,8 +486,8 @@ These steps are automated, using Ansible.
 ## Provisioning the servers using Ansible
 
 Ansible is used to automate the setup of the development machines. The ansible playbooks are in
-the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repo.
-See the README in the repo for the installation and usage instructions.
+the [eo-playbooks](https://github.com/ECHOESProj/eo-playbooks) repository.
+See the README in the repository for the installation and usage instructions.
 
 ![](images/playbook-opt.gif)
 
@@ -510,7 +510,7 @@ The first step is to login into the VM, with:
 
     ssh -i ~/.ssh/eo-stack.key eouser@<ip.of.vm>
 
-The Ansible Playbook clones GitHub repos,
+The Ansible Playbook clones GitHub repositorys,
 and saves the source code in the following directory:
 
     /home/eouser/echoes-deploy
