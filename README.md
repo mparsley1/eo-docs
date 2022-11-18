@@ -1,9 +1,6 @@
-```{figure} images/c19Sbkgy_400x400.png
----
-class: with-border
-width: 180
----
-```
+<h1>
+<img src="images/c19Sbkgy_400x400.png" alt="drawing" width="180"/>
+</h1>
 
 # The ECHOES Earth Observation Processing Service
 
