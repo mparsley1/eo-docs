@@ -691,9 +691,34 @@ See the readme in these repositories for usage instructions.
 
 ## Triggering the processing using webhook callbacks (websockets-server)
 
-The [websockets-server](https://github.com/ECHOESProj/websockets-server) ...
+The [websockets-server](https://github.com/ECHOESProj/websockets-server) allows you to remotely run the processing chains, via the server IP address/domain name and WebSockets. WebSockets allow a long living connection between server and client, meaning it is ideal in a situation for a processing chain may be running for some hours. The `websockets-server` is sent a docker container name and arguments, and responds with the `stdout` or `stderr` of the container. The `stdout` typically contains the location of the GeoTIFFs produced by the processing chain, which can be then downloaded by the application which sent the websockets request.
 
-*To be added*
+Example using using JavaScript. Python has a pacakge called `websocket` which is usefull if working with Python.
+```javascript
+// Create WebSocket connection.
+const socket = new WebSocket('ws://localhost:3000?token=test_token');
+
+// Connection opened
+socket.addEventListener('open', function (event) {
+    socket.send(JSON.stringify({
+        image: 'eo-custom-scripts',
+        instrument: 'S2_MSI_L1C',
+        processing_module: 'ndvi_s2',
+        polygon: 'POLYGON ((-6.485367 52.328206, -6.326752 52.328206, -6.326752 52.416241, -6.485367 52.416241, -6.485367 52.328206))',
+        start: '2021-01-10',
+        stop: '2021-01-11',
+        optional: {
+            '--cloud_cover': 90 
+        }                       
+    }));
+});
+
+// Listen for messages
+socket.addEventListener('message', function (event) {
+    console.log(JSON.parse(event.data));
+});
+```
+
 
 # Jupyter Lab
 
