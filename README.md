@@ -59,7 +59,7 @@ The missions used in the ECHOES project are Sentinel-1 and -2.
 <figcaption><b>Sentinel-1 (© ESA, CC BY-SA 3.0 IGO)</b></figcaption>
 </figure>
 
-The mission comprises two polar-orbiting satellites,
+The Sentinel-1 mission comprises two polar-orbiting satellites,
 performing C-band Synthetic Aperture Radar (SAR) imaging.
 Being an active instrument and operating at (cloud penetrating) C-band frequencies,
 Sentinel-1 can operate data and night
@@ -189,7 +189,7 @@ Sentinel-3, new Sentinels (like 5P), ESA/Landsat, Envisat/Meris, full Sentinel-1
 archive for Sentinel-1 SLC outside Europe and elements of Copernicus Services.
 
 The data is accessible via an S3-compatible object store.
-The object store holds over 20 PB of data.
+The object store holds over 30 PB of data.
 It is possible to run Virtual Machine (VM) instances on a pay-per-use or fixed term basis.
 The size of the virtual machines ranges from 1 (virtual) core and 1 GB of RAM to 24 cores and 496 GB or RAM. It is
 possible to spin up multiple
@@ -211,7 +211,7 @@ AOIs.
 If the original satellite product (SAFE format data) were used,
 it would require a large amount of data to be downloaded and processed;
 whereas, the Sentinel API only return the data that is requested for the AOI.
-Another selling point is that it has cloud-masking and moisacing built in.
+Another selling point is that it has cloud-masking and moisacing built in for Sentinel-2 imagery.
 Also, the processing is done on the Sentinel Hub servers,
 so the processing can be scaled up without needing to be concerned about managing the infrastructure.
 
@@ -219,7 +219,7 @@ so the processing can be scaled up without needing to be concerned about managin
 
 A further benefit of using Sentinel Hub is that the EO data can be accessed as a data cube using
 [xcube](https://xcube.readthedocs.io/en/latest/),
-and the [xcube_sh](https://github.com/dcs4cop/xcube-sh) plugin, which enables xcube to work via the Sentinel Hub API.
+and the [xcube_sh](https://github.com/dcs4cop/xcube-sh) plugin (which enables xcube to work via the Sentinel Hub API).
 Data cubes provide convenient access to a time series of satellite images,
 allowing computations across the time dimension, with raster alignment issues handled out of the box.
 These datacubes are returned as [Xarray](https://docs.xarray.dev/en/stable/) objects.
@@ -234,10 +234,10 @@ and also configures the VM so that xcube can be used in the Jupyter notebooks
 ## A comparison of the options
 
 Alternatives to Sentinel Hub/X-Cube data cubes include Open Data Cube (ODC) and OpenEO.
-Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in eo-custom-scripts) and,
-being a hosted service, it does not require additional infrastructure.
+Sentinel Hub/X-Cube was chosen primarily because Sentinel Hub is used in ECHOES (i.e. in [eo-custom-scripts](#The-EO-Processing-Packages)) 
+and, being a hosted service, it does not require additional infrastructure.
 Whereas, to create a datacube with ODC to cover Ireland for one year,
-for example, would require tens of terabytes of storage and a high spec VM.
+for example, would require tens of terabytes of storage and a high-spec VM.
 
 Both CREODIAS and Sentinel Hub provide access to Sentinel-1, Sentinel-2 L1C and L2A, Sentinel-3 OLCI and SLSTR,
 Sentinel-5P, Landsat 8, 7 and 5, Envisat, MODIS and some Copernicus Services. The CREODIAS object store has some Level-2
@@ -257,7 +257,6 @@ products that are not available on Sentinel Hub.
 The ECHOES EO Processing Service was developed to
 generate GeoTIFFs and associated metadata, which are consumed by the web service.
 It is designed to run in the cloud.
-
 The ECHOES EO Service can consume data from the Sentinel Hub API or alternatively,
 satellite data stored on and object store on CREODIAS, or other compatible cloud services.
 
@@ -357,12 +356,19 @@ on the prod server the bucket is called eo-compass.
 On the dev server, both the Docker containers and Python code is deployed to enable development.
 On the prod server only the Docker containers are deployed.
 
+Another difference betwween the two is that the Juypter Lab service is installed on the dev server,
+but not prod.
+
+Consult [the Playbook](https://github.com/ECHOESProj/eo-playbooks) used to provision both servers
+to determine what is installed on each
+(see [Provisioning the servers using Ansible](#Provisioning-the-servers-using-Ansible)).  
+
 ## Which processing chain should I use?
 
 The [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts)
 processing chain (which uses Sentinel Hub) has a number of advantages over the eoain processing chain (which uses the
 CREODIAS object store EO files).
-It provides a convenient API for accessing and processing satellite data and has clouding mosaicing.
+It provides a convenient API for accessing and processing satellite data and it can provide clouding mosaicing.
 Using the API, only the data within the AOI is processed on the Sentinel Hub server,
 which makes the processing much faster for smaller regions.
 This is in contrast to the eoain processing chain, in which the full granule is downloaded to the VM,
@@ -372,8 +378,9 @@ eo-custom-scripts is the main processing chain code used in the EO Service;
 however, one case for using the eoian processing chain, in preference to eo-custom-scripts,
 is where an algorithm implemented in [SNAP](https://step.esa.int/main/download/snap-download/) is required.
 SNAP has many built-in algorithms which are not directly available in eo-custom-scripts.
-For example, SNAP implements atmospheric correction algorithms that are not available through Sentinel Hub, which can be
-automated using eoian.
+For example, can SNAP carry out custom preprocesssing steps that are not available through Sentinel Hub, 
+which can be automated using eoian 
+(although Sentinel Hub does provide access to the Sentinel-2 L2A product, which is atmospherically corrected).
 The eo-processors package (which uses the eoian package) allows for more flexibility to use other processing software,
 including [SNAP](https://step.esa.int/main/download/snap-download/)
 and [Satpy](https://satpy.readthedocs.io/).
