@@ -850,7 +850,7 @@ The methods include:
 
 ### Example: writing to the object store using eo_io
 
-In this example, we write to an object store.
+The eo_io module is used to write the data to the datastore.
 
 ```python3
     import eo_io
@@ -883,8 +883,6 @@ metadata = Metadata(area_wkt, 'change', 'sentinel2', 'msi', 'S2L2A', date1, date
 store = eo_io.store_dataset.store(dataset, metadata)
 store.to_tiff()
 ```
-
-The eo_io module is used to write the data to the datastore.
 
 # The eo-tracking-matchup repository
 
