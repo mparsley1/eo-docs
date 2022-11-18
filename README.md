@@ -861,7 +861,7 @@ The methods include:
 The eo_io module is used to write the data to the datastore.
 
 ```python3
-    import eo_io
+import eo_io
 
 
 @dataclass
